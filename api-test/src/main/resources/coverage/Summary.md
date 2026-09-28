@@ -1,6 +1,6 @@
 # Coverage Summary
 
-As of: 2026-09-25
+As of: 2026-09-28
 
 ## Estate totals
 
