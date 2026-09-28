@@ -5,8 +5,9 @@
 | Subject code | `PREREG-GETPREREGINFOBYPRID` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-08-07 |
+| Last updated | 2026-09-25 |
 | Unit type | `endpoint` |
+| Stories | MOSIP-17633 |
 
 **Units**
 
@@ -28,7 +29,7 @@ subject: preReg/GetPreRegInfoByPrid
 subject_code: PREREG-GETPREREGINFOBYPRID
 domain: api
 owner: unassigned
-last_updated: "2026-08-07"
+last_updated: "2026-09-25"
 unit_type: endpoint
 units:
   - "GET /preregistration/v1/applications/prereg/info/{preRegistrationId}"
@@ -47,6 +48,8 @@ categories:
   - idempotency
   - data_isolation
   - dependency_state
+stories:
+  - MOSIP-17633
 ```
 
 </details>
@@ -54,11 +57,11 @@ categories:
 <!-- GENERATED:grid -->
 | ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
 |---|---|---|---|---|---|---|---|
-| TC_prereg_GetPreRegInfoByPrid_01 | Given a `preRegistrationId` created earlier by `createPrereg`, when the caller submits `GET /applications/prereg/info/{preRegistrationId}` | Then the response has no `errors`, and the demographic fields nested under `response.demographicResponse.demographicDetails.identity` (`postalCode`, `phone`, `email`) match the created record. | positive | integration | ✅ automated | [preReg/GetPreRegInfoByPrid/GetPreRegInfoByPrid.yml::TC_prereg_GetPreRegInfoByPrid_01](../../preReg/GetPreRegInfoByPrid/GetPreRegInfoByPrid.yml#L4) |  |
+| TC_prereg_GetPreRegInfoByPrid_01 | Given a `preRegistrationId` created earlier by `createPrereg`, when the caller submits `GET /applications/prereg/info/{preRegistrationId}` | Then the response has no `errors`, and the demographic fields nested under `response.demographicResponse.demographicDetails.identity` (`postalCode`, `phone`, `email`) match the created record. | positive | integration | ✅ automated | [preReg/GetPreRegInfoByPrid/GetPreRegInfoByPrid.yml::TC_prereg_GetPreRegInfoByPrid_01](../../preReg/GetPreRegInfoByPrid/GetPreRegInfoByPrid.yml#L4) | Legacy: REG_TC_131, TC-MOSIP-17633-44, TC-MOSIP-17633-54. |
 | TC_Prereg_GetPreRegInfoByPrid_03 | Given a caller with no valid login cookie, when they request the combined application info by `preRegistrationId` | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetPreRegInfoByPrid_04 | Given a caller holding a role outside `REGISTRATION_OFFICER, INDIVIDUAL, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN, PRE_REGISTRATION_ADMIN`, when they request the combined application info | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetPreRegInfoByPrid_05 | Given this is a path-param-only GET with no request body, a conventional field-validation case doesn't directly apply here | TODO — clarify with the team, or reclassify as `not_automatable`; no automated case exists yet. | validation | integration | 🟡 not_automated |  |  |
-| TC_prereg_GetPreRegInfoByPrid_02 | Given a `preRegistrationId` value that doesn't correspond to any stored record (`123456`), when the caller submits the request | Then `errors[0].errorCode` = `PRG_PAM_APP_005`. | not_found | integration | ✅ automated | [preReg/GetPreRegInfoByPrid/GetPreRegInfoByPrid.yml::TC_prereg_GetPreRegInfoByPrid_02](../../preReg/GetPreRegInfoByPrid/GetPreRegInfoByPrid.yml#L22) | This endpoint's own not-found path is reached indirectly: `getPregistrationInfo` internally calls the same `getDemographicData` method `FetchApplicationByPrid` exercises, so the `PRG_PAM_APP_005` here is really that shared lookup's error propagating up. Verified against `DemographicService.getPregistrationInfo`'s source. |
+| TC_prereg_GetPreRegInfoByPrid_02 | Given a `preRegistrationId` value that doesn't correspond to any stored record (`123456`), when the caller submits the request | Then `errors[0].errorCode` = `PRG_PAM_APP_005`. | not_found | integration | ✅ automated | [preReg/GetPreRegInfoByPrid/GetPreRegInfoByPrid.yml::TC_prereg_GetPreRegInfoByPrid_02](../../preReg/GetPreRegInfoByPrid/GetPreRegInfoByPrid.yml#L22) | This endpoint's own not-found path is reached indirectly: `getPregistrationInfo` internally calls the same `getDemographicData` method `FetchApplicationByPrid` exercises, so the `PRG_PAM_APP_005` here is really that shared lookup's error propagating up. Verified against `DemographicService.getPregistrationInfo`'s source. Legacy: REG_TC_132, TC-MOSIP-17633-55. |
 | TC_Prereg_GetPreRegInfoByPrid_06 | Given a `preRegistrationId` at a boundary length/format, when the caller requests it | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetPreRegInfoByPrid_07 | Given the same `preRegistrationId`'s combined info is fetched twice in a row, when the second read is made | TODO — expect an identical response both times (read-only, so trivially idempotent); no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetPreRegInfoByPrid_08 | Given two different applicants' applications, when one applicant's session requests the other's `preRegistrationId` | TODO — expect the cross-applicant read to be rejected; no automated case exists yet. | data_isolation | integration | 🟡 not_automated |  |  |

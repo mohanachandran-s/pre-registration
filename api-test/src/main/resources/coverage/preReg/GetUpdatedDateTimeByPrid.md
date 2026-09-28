@@ -5,8 +5,9 @@
 | Subject code | `PREREG-GETUPDATEDDATETIMEBYPRID` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-08-07 |
+| Last updated | 2026-09-25 |
 | Unit type | `endpoint` |
+| Stories | MOSIP-17633 |
 
 **Units**
 
@@ -28,7 +29,7 @@ subject: preReg/GetUpdatedDateTimeByPrid
 subject_code: PREREG-GETUPDATEDDATETIMEBYPRID
 domain: api
 owner: unassigned
-last_updated: "2026-08-07"
+last_updated: "2026-09-25"
 unit_type: endpoint
 units:
   - POST /preregistration/v1/applications/prereg/updatedTime
@@ -47,6 +48,8 @@ categories:
   - idempotency
   - data_isolation
   - dependency_state
+stories:
+  - MOSIP-17633
 ```
 
 </details>
@@ -54,11 +57,11 @@ categories:
 <!-- GENERATED:grid -->
 | ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
 |---|---|---|---|---|---|---|---|
-| TC_prereg_GetUpdatedDateTimeByPrid_01 | Given three `preRegistrationId`s created by three separate earlier steps, when the caller submits `POST /applications/prereg/updatedTime` with all three in `pre_registration_ids` | Then the response has no `errors` (`checkErrorsOnlyInResponse: true`) and returns each ID's last-updated timestamp. | positive | integration | ✅ automated | [preReg/GetUpdatedDateTimeByPrid/GetUpdatedDateTimeByPrid.yml::TC_prereg_GetUpdatedDateTimeByPrid_01](../../preReg/GetUpdatedDateTimeByPrid/GetUpdatedDateTimeByPrid.yml#L4) |  |
+| TC_prereg_GetUpdatedDateTimeByPrid_01 | Given three `preRegistrationId`s created by three separate earlier steps, when the caller submits `POST /applications/prereg/updatedTime` with all three in `pre_registration_ids` | Then the response has no `errors` (`checkErrorsOnlyInResponse: true`) and returns each ID's last-updated timestamp. | positive | integration | ✅ automated | [preReg/GetUpdatedDateTimeByPrid/GetUpdatedDateTimeByPrid.yml::TC_prereg_GetUpdatedDateTimeByPrid_01](../../preReg/GetUpdatedDateTimeByPrid/GetUpdatedDateTimeByPrid.yml#L4) | Legacy: REG_TC_120, TC-MOSIP-17633-60. |
 | TC_Prereg_GetUpdatedDateTimeByPrid_03 | Given a caller with no valid login cookie, when they request updated-date-time for a list of `preRegistrationId`s | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetUpdatedDateTimeByPrid_04 | Given a caller holding a role outside `REGISTRATION_OFFICER, INDIVIDUAL, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN, REGISTRATION_PROCESSOR`, when they request updated-date-time | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetUpdatedDateTimeByPrid_05 | Given `pre_registration_ids` is an empty array, when the caller submits the request | TODO — no automated case exists yet; `DemographicService.getUpdatedDateTimeForPreIds` has a dedicated empty/null-list branch (`PRG_CORE_REQ_001`) that isn't currently exercised. | validation | integration | 🟡 not_automated |  |  |
-| TC_prereg_GetUpdatedDateTimeByPrid_02 | Given a `pre_registration_id` value that doesn't correspond to any stored record (`rtr4243456rsdgfb`), when the caller submits the request | Then `errors[0].errorCode` = `PRG_PAM_APP_005`. | not_found | integration | ✅ automated | [preReg/GetUpdatedDateTimeByPrid/GetUpdatedDateTimeByPrid.yml::TC_prereg_GetUpdatedDateTimeByPrid_02](../../preReg/GetUpdatedDateTimeByPrid/GetUpdatedDateTimeByPrid.yml#L32) |  |
+| TC_prereg_GetUpdatedDateTimeByPrid_02 | Given a `pre_registration_id` value that doesn't correspond to any stored record (`rtr4243456rsdgfb`), when the caller submits the request | Then `errors[0].errorCode` = `PRG_PAM_APP_005`. | not_found | integration | ✅ automated | [preReg/GetUpdatedDateTimeByPrid/GetUpdatedDateTimeByPrid.yml::TC_prereg_GetUpdatedDateTimeByPrid_02](../../preReg/GetUpdatedDateTimeByPrid/GetUpdatedDateTimeByPrid.yml#L32) | Legacy: REG_TC_121, REG_TC_126, TC-MOSIP-17633-61. |
 | TC_Prereg_GetUpdatedDateTimeByPrid_06 | Given a very large `pre_registration_ids` list, when the caller submits the request | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetUpdatedDateTimeByPrid_07 | Given the same list of `preRegistrationId`s is submitted twice in a row, when the second call is made | TODO — expect an identical response both times (read-only, so trivially idempotent); no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetUpdatedDateTimeByPrid_08 | Given two different applicants' applications, when one applicant's session requests updated-date-time for the other's `preRegistrationId` | TODO — expect the cross-applicant read to be rejected; no automated case exists yet. | data_isolation | integration | 🟡 not_automated |  |  |

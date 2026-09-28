@@ -5,8 +5,9 @@
 | Subject code | `PREREG-GETBOOKINGSFORREGCENTER` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-08-11 |
+| Last updated | 2026-09-25 |
 | Unit type | `endpoint` |
+| Stories | MOSIP-11719, MOSIP-17633 |
 
 **Units**
 
@@ -18,7 +19,7 @@
 
 | Total | ✅ Automated | 🟡 Not automated | ⛔ Not automatable | Coverage |
 |---|---|---|---|---|
-| 24 | 4 | 20 | 0 | 16.7% |
+| 25 | 4 | 21 | 0 | 16.0% |
 
 **Categories:** `positive` `authn` `authz` `validation` `not_found` `boundary` `idempotency` `data_isolation`
 
@@ -30,16 +31,16 @@ subject: preReg/GetBookingsForRegCenter
 subject_code: PREREG-GETBOOKINGSFORREGCENTER
 domain: api
 owner: unassigned
-last_updated: "2026-08-11"
+last_updated: "2026-09-25"
 unit_type: endpoint
 units:
   - "GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-10-01&appointmentToDate=2034-10-13"
   - "GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-45461&appointmentToDate=2034-10-13"
   - "GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=20204y464tg1&appointmentToDate=2034-10-13"
 summary:
-  total: 24
+  total: 25
   automated: 4
-  not_automated: 20
+  not_automated: 21
   not_automatable: 0
 categories:
   - positive
@@ -50,6 +51,9 @@ categories:
   - boundary
   - idempotency
   - data_isolation
+stories:
+  - MOSIP-11719
+  - MOSIP-17633
 ```
 
 </details>
@@ -57,10 +61,10 @@ categories:
 <!-- GENERATED:grid -->
 | ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
 |---|---|---|---|---|---|---|---|
-| TC_prereg_GetBookingsForRegCenter_01 | Given registration centre `10003` and a valid date range, when the caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-10-01&appointmentToDate=2034-10-13` | Then the response has no `errors` (`checkErrorsOnlyInResponse: true`). | positive | integration | ✅ automated | [preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml::TC_prereg_GetBookingsForRegCenter_01](../../preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml#L4) |  |
+| TC_prereg_GetBookingsForRegCenter_01 | Given registration centre `10003` and a valid date range, when the caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-10-01&appointmentToDate=2034-10-13` | Then the response has no `errors` (`checkErrorsOnlyInResponse: true`). | positive | integration | ✅ automated | [preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml::TC_prereg_GetBookingsForRegCenter_01](../../preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml#L4) | Legacy: TC-MOSIP-11719-11, TC-MOSIP-17633-15, REG_TC_238. |
 | TC_Prereg_GetBookingsForRegCenter_05 | Given a caller with no valid login cookie, when they submit `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-10-01&appointmentToDate=2034-10-13` | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetBookingsForRegCenter_06 | Given a caller holding a role outside `INDIVIDUAL, REGISTRATION_OFFICER, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN`, when they submit `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-10-01&appointmentToDate=2034-10-13` | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
-| TC_prereg_GetBookingsForRegCenter_03 | Given a `regCenterId` containing non-digit characters (`10@@#$$003`) with an otherwise-valid date range, when the caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-10-01&appointmentToDate=2034-10-13` | Then `errors[0].errorCode` = `PRG_BOOK_RCI_032` per the test's own assertion — but see Notes, the real code gives a different code. | validation | integration | ✅ automated | [preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml::TC_prereg_GetBookingsForRegCenter_03](../../preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml#L36) | 🛑 **Confirmed mismatch, not just an unresolvable code.** Unlike the `PRG_BOOK_RCI_*` codes elsewhere in this batch (unverifiable because no source in this repo defines them), this one *is* verifiable: `ApplicationController.getBookingsForRegCenter` → `ApplicationService.getBookingsForRegCenter` runs `this.validateRegistrationCenterId(regCenterId)` as the very first line, before any date parsing or downstream call. That method regex-checks `regCenterId` against `\d+`; a non-digit value throws `InvalidIDException`, caught and rethrown as `PRG_APP_013` — never `PRG_BOOK_RCI_032`. Proven independently by row `TC_prereg_GetBookingsForRegCenter_04` below, which uses this *exact same* invalid `regCenterId` value (just with a different, also-invalid date) and correctly expects `PRG_APP_013` — the same bad input produces two different expected codes across these two rows, and only one of them can be right. Traced and confirmed in `pre-registration-application-service` during batch 3's `GetAllApplications.md` authoring. |
+| TC_prereg_GetBookingsForRegCenter_03 | Given a `regCenterId` containing non-digit characters (`10@@#$$003`) with an otherwise-valid date range, when the caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-10-01&appointmentToDate=2034-10-13` | Then `errors[0].errorCode` = `PRG_BOOK_RCI_032` per the test's own assertion — but see Notes, the real code gives a different code. | validation | integration | ✅ automated | [preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml::TC_prereg_GetBookingsForRegCenter_03](../../preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml#L36) | 🛑 **Confirmed mismatch, not just an unresolvable code.** Unlike the `PRG_BOOK_RCI_*` codes elsewhere in this batch (unverifiable because no source in this repo defines them), this one *is* verifiable: `ApplicationController.getBookingsForRegCenter` → `ApplicationService.getBookingsForRegCenter` runs `this.validateRegistrationCenterId(regCenterId)` as the very first line, before any date parsing or downstream call. That method regex-checks `regCenterId` against `\d+`; a non-digit value throws `InvalidIDException`, caught and rethrown as `PRG_APP_013` — never `PRG_BOOK_RCI_032`. Proven independently by row `TC_prereg_GetBookingsForRegCenter_04` below, which uses this *exact same* invalid `regCenterId` value (just with a different, also-invalid date) and correctly expects `PRG_APP_013` — the same bad input produces two different expected codes across these two rows, and only one of them can be right. Traced and confirmed in `pre-registration-application-service` during batch 3's `GetAllApplications.md` authoring. Legacy: REG_TC_240. |
 | TC_Prereg_GetBookingsForRegCenter_07 | Given a valid `regCenterId`/date range that matches zero bookings, when the caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-10-01&appointmentToDate=2034-10-13` | TODO — `ApplicationService.getBookingsForRegCenter` throws `PRG_APP_012` (`RecordNotFoundException`) when the repository query returns null; no automated case currently exercises this. | not_found | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetBookingsForRegCenter_08 | Given a `regCenterId`/date-range combination at a boundary (e.g. a single-day range), when the caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-10-01&appointmentToDate=2034-10-13` | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetBookingsForRegCenter_09 | Given the same `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-10-01&appointmentToDate=2034-10-13` request is made twice in a row, when the second call is made | TODO — expect an identical result both times (read-only, so trivially idempotent); no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |
@@ -68,7 +72,7 @@ categories:
 | TC_Prereg_GetBookingsForRegCenter_11 | Given registration centre `10003` and a malformed date, when the caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-45461&appointmentToDate=2034-10-13` with an otherwise-valid centre | TODO — no automated case in *this* subject genuinely exercises this unit's positive path; row `_02` below is this unit's only case, and it's negative. | positive | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetBookingsForRegCenter_12 | Given a caller with no valid login cookie, when they submit `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-45461&appointmentToDate=2034-10-13` | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetBookingsForRegCenter_13 | Given a caller holding a role outside `INDIVIDUAL, REGISTRATION_OFFICER, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN`, when they submit `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-45461&appointmentToDate=2034-10-13` | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
-| TC_prereg_GetBookingsForRegCenter_02 | Given `appointmentDate` is provided in an unparseable format (`2020-45461`) with a valid `regCenterId`, when the caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-45461&appointmentToDate=2034-10-13` | Then `errors[0].errorCode` = `PRG_APP_013`. | validation | integration | ✅ automated | [preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml::TC_prereg_GetBookingsForRegCenter_02](../../preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml#L18) | Confirmed correct: `LocalDate.parse(appointmentFromDate)` throws `DateTimeParseException`, caught and mapped to `PRG_APP_013` — verified in the same source trace as row `_03`'s Notes. |
+| TC_prereg_GetBookingsForRegCenter_02 | Given `appointmentDate` is provided in an unparseable format (`2020-45461`) with a valid `regCenterId`, when the caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-45461&appointmentToDate=2034-10-13` | Then `errors[0].errorCode` = `PRG_APP_013`. | validation | integration | ✅ automated | [preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml::TC_prereg_GetBookingsForRegCenter_02](../../preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml#L18) | Confirmed correct: `LocalDate.parse(appointmentFromDate)` throws `DateTimeParseException`, caught and mapped to `PRG_APP_013` — verified in the same source trace as row `_03`'s Notes. Legacy: TC-MOSIP-17633-17, REG_TC_239. |
 | TC_Prereg_GetBookingsForRegCenter_14 | Given `appointmentDate=2020-45461` matches zero bookings once past the (invalid) date check, when the caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-45461&appointmentToDate=2034-10-13` | TODO — not reachable in practice, since the malformed date is rejected before any lookup; reclassify as `not_automatable` if this unit is kept as-is. | not_found | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetBookingsForRegCenter_15 | Given a date-format edge case against `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-45461&appointmentToDate=2034-10-13`, when the caller submits it | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetBookingsForRegCenter_16 | Given the same `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-45461&appointmentToDate=2034-10-13` request is made twice in a row, when the second call is made | TODO — expect an identical error both times; no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |
@@ -76,11 +80,12 @@ categories:
 | TC_Prereg_GetBookingsForRegCenter_18 | Given both `regCenterId` and date are valid, when the caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=20204y464tg1&appointmentToDate=2034-10-13` with a genuinely valid centre | TODO — no automated case in *this* subject genuinely exercises this unit's positive path; row `_04` below is this unit's only case, and it's negative (both fields invalid). | positive | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetBookingsForRegCenter_19 | Given a caller with no valid login cookie, when they submit `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=20204y464tg1&appointmentToDate=2034-10-13` | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetBookingsForRegCenter_20 | Given a caller holding a role outside `INDIVIDUAL, REGISTRATION_OFFICER, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN`, when they submit `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=20204y464tg1&appointmentToDate=2034-10-13` | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
-| TC_prereg_GetBookingsForRegCenter_04 | Given both `regCenterId` (`10@@#$$003`, the identical invalid value as row `_03`) and `appointmentDate` (`20204y464tg1`) are invalid, when the caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=20204y464tg1&appointmentToDate=2034-10-13` | Then `errors[0].errorCode` = `PRG_APP_013`. | validation | integration | ✅ automated | [preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml::TC_prereg_GetBookingsForRegCenter_04](../../preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml#L54) | This row is the proof for row `_03`'s 🛑 finding — see that row's Notes. `regCenterId` validation runs before date parsing, so the invalid date here is never actually reached. |
+| TC_prereg_GetBookingsForRegCenter_04 | Given both `regCenterId` (`10@@#$$003`, the identical invalid value as row `_03`) and `appointmentDate` (`20204y464tg1`) are invalid, when the caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=20204y464tg1&appointmentToDate=2034-10-13` | Then `errors[0].errorCode` = `PRG_APP_013`. | validation | integration | ✅ automated | [preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml::TC_prereg_GetBookingsForRegCenter_04](../../preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml#L54) | This row is the proof for row `_03`'s 🛑 finding — see that row's Notes. `regCenterId` validation runs before date parsing, so the invalid date here is never actually reached. Legacy: TC-MOSIP-17633-18, REG_TC_241. |
 | TC_Prereg_GetBookingsForRegCenter_21 | Given the invalid-`regCenterId`/invalid-date combination matches zero bookings, when the caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=20204y464tg1&appointmentToDate=2034-10-13` | TODO — not reachable in practice, since `regCenterId` validation is rejected first; reclassify as `not_automatable` if this unit is kept as-is. | not_found | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetBookingsForRegCenter_22 | Given a boundary condition against `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=20204y464tg1&appointmentToDate=2034-10-13`, when the caller submits it | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetBookingsForRegCenter_23 | Given the same `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=20204y464tg1&appointmentToDate=2034-10-13` request is made twice in a row, when the second call is made | TODO — expect an identical error both times; no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetBookingsForRegCenter_24 | Given two different registration centres, when a caller submits `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=20204y464tg1&appointmentToDate=2034-10-13` for each | TODO — no automated case exists yet. | data_isolation | integration | 🟡 not_automated |  |  |
+| TC_Prereg_GetBookingsForRegCenter_25 | Given both `regCenterId` and `appointmentDate` are left out of `GET /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-10-01&appointmentToDate=2034-10-13`, when the caller submits the request | Then the request is rejected because both are mandatory (Swagger flagged them as required in the legacy manual run; the API-level error code is to be confirmed on the first automated run). | validation | integration | 🟡 not_automated |  | Legacy: TC-MOSIP-17633-16. |
 <!-- /GENERATED:grid -->
 
 **About this endpoint**

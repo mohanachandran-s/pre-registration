@@ -5,8 +5,9 @@
 | Subject code | `PREREG-FETCHAPPOINTMENTDETAILSBYPRID` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-08-11 |
+| Last updated | 2026-09-25 |
 | Unit type | `endpoint` |
+| Stories | MOSIP-11719, MOSIP-17633 |
 
 **Units**
 
@@ -16,7 +17,7 @@
 
 | Total | ✅ Automated | 🟡 Not automated | ⛔ Not automatable | Coverage |
 |---|---|---|---|---|
-| 10 | 4 | 6 | 0 | 40.0% |
+| 13 | 4 | 9 | 0 | 30.8% |
 
 **Categories:** `positive` `authn` `authz` `validation` `not_found` `boundary` `idempotency` `data_isolation` `dependency_state`
 
@@ -28,14 +29,14 @@ subject: preReg/FetchAppointmentDetailsByPrid
 subject_code: PREREG-FETCHAPPOINTMENTDETAILSBYPRID
 domain: api
 owner: unassigned
-last_updated: "2026-08-11"
+last_updated: "2026-09-25"
 unit_type: endpoint
 units:
   - "GET /preregistration/v1/applications/appointment/{preRegistrationId}"
 summary:
-  total: 10
+  total: 13
   automated: 4
-  not_automated: 6
+  not_automated: 9
   not_automatable: 0
 categories:
   - positive
@@ -47,6 +48,9 @@ categories:
   - idempotency
   - data_isolation
   - dependency_state
+stories:
+  - MOSIP-11719
+  - MOSIP-17633
 ```
 
 </details>
@@ -54,16 +58,19 @@ categories:
 <!-- GENERATED:grid -->
 | ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
 |---|---|---|---|---|---|---|---|
-| TC_prereg_FetchAppointmentDetailsByPrid_01 | Given a `preRegistrationId` created by `createPrereg`, when the caller submits `GET /applications/appointment/{preRegistrationId}` | Then `registration_center_id` = `10003`. | positive | integration | ✅ automated | [preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml::TC_prereg_FetchAppointmentDetailsByPrid_01](../../preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml#L4) | This subject's `preRegistrationId` isn't chained from a `bookAppointment` step, so this row succeeds regardless of whether an appointment was ever actually booked — worth confirming what `registration_center_id: 10003` reflects for an application with no booking. |
+| TC_prereg_FetchAppointmentDetailsByPrid_01 | Given a `preRegistrationId` created by `createPrereg`, when the caller submits `GET /applications/appointment/{preRegistrationId}` | Then `registration_center_id` = `10003`. | positive | integration | ✅ automated | [preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml::TC_prereg_FetchAppointmentDetailsByPrid_01](../../preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml#L4) | This subject's `preRegistrationId` isn't chained from a `bookAppointment` step, so this row succeeds regardless of whether an appointment was ever actually booked — worth confirming what `registration_center_id: 10003` reflects for an application with no booking. Legacy: REG_TC_181, TC-MOSIP-11719-13, TC-MOSIP-17633-25. |
 | TC_Prereg_FetchAppointmentDetailsByPrid_04 | Given a caller with no valid login cookie, when they fetch appointment details by `preRegistrationId` | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_FetchAppointmentDetailsByPrid_05 | Given a caller holding a role outside `REGISTRATION_OFFICER, INDIVIDUAL`, when they fetch appointment details | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
 | TC_Prereg_FetchAppointmentDetailsByPrid_06 | Given this is a path-param-only GET with no request body, a conventional field-validation case doesn't directly apply here | TODO — clarify with the team, or reclassify as `not_automatable`; no automated case exists yet. | validation | integration | 🟡 not_automated |  |  |
-| TC_prereg_FetchAppointmentDetailsByPrid_02 | Given a `preRegistrationId` value that doesn't correspond to any stored application (`ggfr3567ugg`), when the caller submits the request | Then `errors[0].errorCode` = `PRG_APP_013`. | not_found | integration | ✅ automated | [preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml::TC_prereg_FetchAppointmentDetailsByPrid_02](../../preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml#L18) |  |
+| TC_prereg_FetchAppointmentDetailsByPrid_02 | Given a `preRegistrationId` value that doesn't correspond to any stored application (`ggfr3567ugg`), when the caller submits the request | Then `errors[0].errorCode` = `PRG_APP_013`. | not_found | integration | ✅ automated | [preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml::TC_prereg_FetchAppointmentDetailsByPrid_02](../../preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml#L18) | Legacy: REG_TC_182, TC-MOSIP-17633-30. |
 | TC_Prereg_FetchAppointmentDetailsByPrid_07 | Given a `preRegistrationId` at a boundary length/format, when the caller requests appointment details | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_FetchAppointmentDetailsByPrid_08 | Given the same appointment details are fetched twice in a row, when the second read is made | TODO — expect an identical response both times (read-only, so trivially idempotent); no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |
 | TC_Prereg_FetchAppointmentDetailsByPrid_09 | Given two different applicants' applications, when one applicant's session requests the other's appointment details | TODO — expect the cross-applicant read to be rejected; no automated case exists yet. | data_isolation | integration | 🟡 not_automated |  |  |
 | TC_prereg_FetchAppointmentDetailsByPrid_01-dependency | Given the same case as the positive row above, when the read happens right after `createPrereg` created the application | Then the response succeeds, proving the read genuinely depends on that prior step existing. | dependency_state | integration | ✅ automated | [preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml::TC_prereg_FetchAppointmentDetailsByPrid_01](../../preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml#L4) | Same underlying case as the `positive` row above. |
-| TC_prereg_FetchAppointmentDetailsByPrid_03 | Given a `preRegistrationId` created via a dedicated "for expiry" fixture whose application status has since expired, when the caller requests its appointment details | Then `errors[0].errorCode` = `PRG_BOOK_RCI_013`. | dependency_state | integration | ✅ automated | [preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml::TC_prereg_FetchAppointmentDetailsByPrid_03](../../preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml#L36) | Somewhat unexpected: fetching details for an expired application returns a *booking*-domain error code (`PRG_BOOK_RCI_013`, the same one `CancelAppointment.md` asserts for "nothing to cancel") rather than a demographic/application-status code — suggests `getAppointmentDetails` internally requires a live/active booking record to exist, and an expired application has none. Not independently traced to a specific source line in this pass. |
+| TC_prereg_FetchAppointmentDetailsByPrid_03 | Given a `preRegistrationId` created via a dedicated "for expiry" fixture whose application status has since expired, when the caller requests its appointment details | Then `errors[0].errorCode` = `PRG_BOOK_RCI_013`. | dependency_state | integration | ✅ automated | [preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml::TC_prereg_FetchAppointmentDetailsByPrid_03](../../preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml#L36) | Somewhat unexpected: fetching details for an expired application returns a *booking*-domain error code (`PRG_BOOK_RCI_013`, the same one `CancelAppointment.md` asserts for "nothing to cancel") rather than a demographic/application-status code — suggests `getAppointmentDetails` internally requires a live/active booking record to exist, and an expired application has none. Not independently traced to a specific source line in this pass. Legacy: TC-MOSIP-17633-27. |
+| TC_Prereg_FetchAppointmentDetailsByPrid_10 | Given a `preRegistrationId` whose application is still incomplete (no appointment was ever booked), when the caller submits `GET /applications/appointment/{preRegistrationId}` | Then `errors[0].errorCode` = `PRG_BOOK_RCI_013` ("Booking data not found"), as recorded in the legacy manual run. | dependency_state | integration | 🟡 not_automated |  | Legacy: TC-MOSIP-17633-26. |
+| TC_Prereg_FetchAppointmentDetailsByPrid_11 | Given a `preRegistrationId` whose appointment was cancelled, when the caller submits `GET /applications/appointment/{preRegistrationId}` | Then `errors[0].errorCode` = `PRG_BOOK_RCI_013` ("Booking data not found"), as recorded in the legacy manual run. | dependency_state | integration | 🟡 not_automated |  | Legacy: TC-MOSIP-17633-28. |
+| TC_Prereg_FetchAppointmentDetailsByPrid_12 | Given a `preRegistrationId` whose application is in `Pending_Appointment` status (not booked yet), when the caller submits `GET /applications/appointment/{preRegistrationId}` | Then `errors[0].errorCode` = `PRG_BOOK_RCI_013` ("Booking data not found"), as recorded in the legacy manual run. | dependency_state | integration | 🟡 not_automated |  | Legacy: TC-MOSIP-17633-29. |
 <!-- /GENERATED:grid -->
 
 **About this endpoint**

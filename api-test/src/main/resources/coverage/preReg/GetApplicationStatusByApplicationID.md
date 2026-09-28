@@ -5,8 +5,9 @@
 | Subject code | `PREREG-GETAPPLICATIONSTATUSBYAPPLICATIONID` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-08-07 |
+| Last updated | 2026-09-25 |
 | Unit type | `endpoint` |
+| Stories | MOSIP-11719, MOSIP-17633 |
 
 **Units**
 
@@ -28,7 +29,7 @@ subject: preReg/GetApplicationStatusByApplicationID
 subject_code: PREREG-GETAPPLICATIONSTATUSBYAPPLICATIONID
 domain: api
 owner: unassigned
-last_updated: "2026-08-07"
+last_updated: "2026-09-25"
 unit_type: endpoint
 units:
   - "GET /preregistration/v1/applications/status/{applicationId}"
@@ -47,6 +48,9 @@ categories:
   - idempotency
   - data_isolation
   - dependency_state
+stories:
+  - MOSIP-11719
+  - MOSIP-17633
 ```
 
 </details>
@@ -54,11 +58,11 @@ categories:
 <!-- GENERATED:grid -->
 | ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
 |---|---|---|---|---|---|---|---|
-| TC_prereg_GetApplicationStatusByApplicationID_01 | Given an `applicationId` created earlier by `createPrereg`, when the caller submits `GET /applications/status/{applicationId}` | Then the response has no `errors` (`checkErrorsOnlyInResponse: true`). | positive | integration | ✅ automated | [preReg/GetApplicationStatusByApplicationID/GetApplicationStatusByApplicationID.yml::TC_prereg_GetApplicationStatusByApplicationID_01](../../preReg/GetApplicationStatusByApplicationID/GetApplicationStatusByApplicationID.yml#L4) | The YAML's `output` value (`"response": "Cancelled"`) is never actually checked — `checkErrorsOnlyInResponse: true` skips value comparison entirely, so this row only proves "the call succeeds," not that the returned status equals `Cancelled`. |
+| TC_prereg_GetApplicationStatusByApplicationID_01 | Given an `applicationId` created earlier by `createPrereg`, when the caller submits `GET /applications/status/{applicationId}` | Then the response has no `errors` (`checkErrorsOnlyInResponse: true`). | positive | integration | ✅ automated | [preReg/GetApplicationStatusByApplicationID/GetApplicationStatusByApplicationID.yml::TC_prereg_GetApplicationStatusByApplicationID_01](../../preReg/GetApplicationStatusByApplicationID/GetApplicationStatusByApplicationID.yml#L4) | The YAML's `output` value (`"response": "Cancelled"`) is never actually checked — `checkErrorsOnlyInResponse: true` skips value comparison entirely, so this row only proves "the call succeeds," not that the returned status equals `Cancelled`. Legacy: TC-MOSIP-11719-10, TC-MOSIP-17633-19, REG_TC_208, REG_TC_209. |
 | TC_Prereg_GetApplicationStatusByApplicationID_03 | Given a caller with no valid login cookie, when they request an application's status by `applicationId` | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetApplicationStatusByApplicationID_04 | Given a caller holding a role outside `REGISTRATION_OFFICER, INDIVIDUAL, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN`, when they request an application's status by `applicationId` | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetApplicationStatusByApplicationID_05 | Given this is a path-param-only GET with no request body, a conventional field-validation case doesn't directly apply here | TODO — clarify with the team, or reclassify as `not_automatable`; no automated case exists yet. | validation | integration | 🟡 not_automated |  |  |
-| TC_prereg_GetApplicationStatusByApplicationID_02 | Given an `applicationId` value that is syntactically odd (`erwsdhgqw5dcfbz`) but not rejected by any format check, when the caller submits the request | Then `errors[0].errorCode` = `PRG_APP_013` (record not found) — same "invalid ID actually just means not-found" behavior as `GetApplicationWithPrId.md`. | not_found | integration | ✅ automated | [preReg/GetApplicationStatusByApplicationID/GetApplicationStatusByApplicationID.yml::TC_prereg_GetApplicationStatusByApplicationID_02](../../preReg/GetApplicationStatusByApplicationID/GetApplicationStatusByApplicationID.yml#L19) | `ApplicationService.getApplicationStatus` follows the identical null-check-then-lookup pattern as `getApplicationInfo` — categorized here as `not_found` rather than `validation` for the same reason as `GetApplicationWithPrId.md` row `TC_prereg_GetApplicationWithPrId_01`. |
+| TC_prereg_GetApplicationStatusByApplicationID_02 | Given an `applicationId` value that is syntactically odd (`erwsdhgqw5dcfbz`) but not rejected by any format check, when the caller submits the request | Then `errors[0].errorCode` = `PRG_APP_013` (record not found) — same "invalid ID actually just means not-found" behavior as `GetApplicationWithPrId.md`. | not_found | integration | ✅ automated | [preReg/GetApplicationStatusByApplicationID/GetApplicationStatusByApplicationID.yml::TC_prereg_GetApplicationStatusByApplicationID_02](../../preReg/GetApplicationStatusByApplicationID/GetApplicationStatusByApplicationID.yml#L19) | `ApplicationService.getApplicationStatus` follows the identical null-check-then-lookup pattern as `getApplicationInfo` — categorized here as `not_found` rather than `validation` for the same reason as `GetApplicationWithPrId.md` row `TC_prereg_GetApplicationWithPrId_01`. Legacy: TC-MOSIP-17633-20. |
 | TC_Prereg_GetApplicationStatusByApplicationID_06 | Given an `applicationId` at a boundary length/format, when the caller requests its status | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetApplicationStatusByApplicationID_07 | Given the same `applicationId`'s status is fetched twice in a row, when the second read is made | TODO — expect an identical response both times (read-only, so trivially idempotent); no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetApplicationStatusByApplicationID_08 | Given two different applicants' applications, when one applicant's session requests the other's application status by `applicationId` | TODO — expect the cross-applicant read to be rejected; no automated case exists yet. | data_isolation | integration | 🟡 not_automated |  |  |

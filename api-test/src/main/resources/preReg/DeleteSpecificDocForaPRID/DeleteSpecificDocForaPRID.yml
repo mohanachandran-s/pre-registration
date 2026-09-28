@@ -5,7 +5,7 @@ DeleteSpecificDocForaPRID:
       description: Validate that deleting a specific document for a pre registration ID is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
-      restMethod: post
+      restMethod: delete
       inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID
       outputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRIDResult
       input: '{
@@ -20,7 +20,7 @@ DeleteSpecificDocForaPRID:
       uniqueIdentifier: TC_prereg_DeleteSpecificDocForaPRID_02
       description: Validate that deleting a pre registration fails when an invalid pre registration ID is provided
       role: batch
-      restMethod: post
+      restMethod: delete
       inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID
       outputTemplate: preReg/error
       input: '{
@@ -39,7 +39,7 @@ DeleteSpecificDocForaPRID:
       uniqueIdentifier: TC_prereg_DeleteSpecificDocForaPRID_03
       description: Validate that deleting a specific document for a pre registration ID fails when an invalid document ID is provided
       role: batch
-      restMethod: post
+      restMethod: delete
       inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID
       outputTemplate: preReg/error
       input: '{

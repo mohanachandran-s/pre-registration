@@ -5,8 +5,9 @@
 | Subject code | `PREREG-FETCHAVAILABILITYDATA` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-08-11 |
+| Last updated | 2026-09-25 |
 | Unit type | `endpoint` |
+| Stories | MOSIP-11719, MOSIP-17633 |
 
 **Units**
 
@@ -29,7 +30,7 @@ subject: preReg/FetchAvailabilityData
 subject_code: PREREG-FETCHAVAILABILITYDATA
 domain: api
 owner: unassigned
-last_updated: "2026-08-11"
+last_updated: "2026-09-25"
 unit_type: endpoint
 units:
   - GET /preregistration/v1/applications/appointment/slots/availability/10003
@@ -48,6 +49,9 @@ categories:
   - boundary
   - idempotency
   - data_isolation
+stories:
+  - MOSIP-11719
+  - MOSIP-17633
 ```
 
 </details>
@@ -55,7 +59,7 @@ categories:
 <!-- GENERATED:grid -->
 | ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
 |---|---|---|---|---|---|---|---|
-| TC_prereg_FetchAvailabilityDataByCenterID_01 | Given registration centre `10003`, when the caller submits `GET /preregistration/v1/applications/appointment/slots/availability/10003` (the centre ID hardcoded directly in the path, not templated) | Then `regCenterId` = `10003`. | positive | integration | ✅ automated | [preReg/FetchAvailabilityData/FetchAvailabilityData.yml::TC_prereg_FetchAvailabilityDataByCenterID_01](../../preReg/FetchAvailabilityData/FetchAvailabilityData.yml#L4) | This case's `endPoint:` hardcodes `10003` literally rather than using a `{registrationCenterId}` placeholder — the `input.registrationCenterId` value is never actually substituted into the URL, so it's dead/unused for this specific case. Harmless (the hardcoded value happens to match), but inconsistent with row `_02`, which does use the placeholder correctly. |
+| TC_prereg_FetchAvailabilityDataByCenterID_01 | Given registration centre `10003`, when the caller submits `GET /preregistration/v1/applications/appointment/slots/availability/10003` (the centre ID hardcoded directly in the path, not templated) | Then `regCenterId` = `10003`. | positive | integration | ✅ automated | [preReg/FetchAvailabilityData/FetchAvailabilityData.yml::TC_prereg_FetchAvailabilityDataByCenterID_01](../../preReg/FetchAvailabilityData/FetchAvailabilityData.yml#L4) | This case's `endPoint:` hardcodes `10003` literally rather than using a `{registrationCenterId}` placeholder — the `input.registrationCenterId` value is never actually substituted into the URL, so it's dead/unused for this specific case. Harmless (the hardcoded value happens to match), but inconsistent with row `_02`, which does use the placeholder correctly. Legacy: TC-MOSIP-11719-09, TC-MOSIP-17633-40, REG_TC_214. |
 | TC_Prereg_FetchAvailabilityDataByCenterID_03 | Given a caller with no valid login cookie, when they submit `GET /preregistration/v1/applications/appointment/slots/availability/10003` | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_FetchAvailabilityDataByCenterID_04 | Given a caller holding a role outside `REGISTRATION_OFFICER, INDIVIDUAL`, when they submit `GET /preregistration/v1/applications/appointment/slots/availability/10003` | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
 | TC_Prereg_FetchAvailabilityDataByCenterID_05 | Given `GET /preregistration/v1/applications/appointment/slots/availability/10003` is a path-param-only GET with no request body, a conventional field-validation case doesn't directly apply to this unit | TODO — clarify with the team, or reclassify as `not_automatable`; no automated case exists yet. | validation | integration | 🟡 not_automated |  |  |
@@ -63,10 +67,10 @@ categories:
 | TC_Prereg_FetchAvailabilityDataByCenterID_07 | Given a request against `GET /preregistration/v1/applications/appointment/slots/availability/10003` at a boundary condition (e.g. far-future date range), when the caller submits it | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_FetchAvailabilityDataByCenterID_08 | Given the same `GET /preregistration/v1/applications/appointment/slots/availability/10003` request is made twice in a row, when the second call is made | TODO — expect an identical result both times (read-only, so trivially idempotent, modulo slots filling up between calls); no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |
 | TC_Prereg_FetchAvailabilityDataByCenterID_09 | Given `GET /preregistration/v1/applications/appointment/slots/availability/10003` returns centre-wide (not applicant-scoped) data | TODO — clarify whether `data_isolation` is a meaningful category here at all; likely reclassify as `not_automatable`; no automated case exists yet. | data_isolation | integration | 🟡 not_automated |  |  |
-| TC_Prereg_FetchAvailabilityDataByCenterID_10 | Given a valid registration centre, when the caller submits `GET /preregistration/v1/applications/appointment/slots/availability/{registrationCenterId}` with the ID properly templated | TODO — no automated case in *this* subject genuinely exercises the templated-path unit's positive path; row `_01` above uses the hardcoded-literal unit instead. | positive | integration | 🟡 not_automated |  |  |
+| TC_Prereg_FetchAvailabilityDataByCenterID_10 | Given a valid registration centre, when the caller submits `GET /preregistration/v1/applications/appointment/slots/availability/{registrationCenterId}` with the ID properly templated | TODO — no automated case in *this* subject genuinely exercises the templated-path unit's positive path; row `_01` above uses the hardcoded-literal unit instead. | positive | integration | 🟡 not_automated |  | Legacy: TC-MOSIP-11719-12. |
 | TC_Prereg_FetchAvailabilityDataByCenterID_11 | Given a caller with no valid login cookie, when they submit `GET /preregistration/v1/applications/appointment/slots/availability/{registrationCenterId}` | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_FetchAvailabilityDataByCenterID_12 | Given a caller holding a role outside `REGISTRATION_OFFICER, INDIVIDUAL`, when they submit `GET /preregistration/v1/applications/appointment/slots/availability/{registrationCenterId}` | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
-| TC_prereg_FetchAvailabilityDataByCenterID_02 | Given a `registrationCenterId` value with no matching centre (`@#@$W#`), when the caller submits `GET /preregistration/v1/applications/appointment/slots/availability/{registrationCenterId}` | Then `errors[0].errorCode` = `KER-MSD-215`. | validation | integration | ✅ automated | [preReg/FetchAvailabilityData/FetchAvailabilityData.yml::TC_prereg_FetchAvailabilityDataByCenterID_02](../../preReg/FetchAvailabilityData/FetchAvailabilityData.yml#L18) | Same kernel/master-data-relayed code as `GetAvailableSlotForRegCentreId.md`'s equivalent row. |
+| TC_prereg_FetchAvailabilityDataByCenterID_02 | Given a `registrationCenterId` value with no matching centre (`@#@$W#`), when the caller submits `GET /preregistration/v1/applications/appointment/slots/availability/{registrationCenterId}` | Then `errors[0].errorCode` = `KER-MSD-215`. | validation | integration | ✅ automated | [preReg/FetchAvailabilityData/FetchAvailabilityData.yml::TC_prereg_FetchAvailabilityDataByCenterID_02](../../preReg/FetchAvailabilityData/FetchAvailabilityData.yml#L18) | Same kernel/master-data-relayed code as `GetAvailableSlotForRegCentreId.md`'s equivalent row. Legacy: TC-MOSIP-17633-41, REG_TC_215. |
 | TC_Prereg_FetchAvailabilityDataByCenterID_13 | Given a registration centre matched via `GET /preregistration/v1/applications/appointment/slots/availability/{registrationCenterId}` has zero available slots, when the caller submits the request | TODO — expect an empty result with HTTP 200, not an error; no automated case exists yet. | not_found | integration | 🟡 not_automated |  |  |
 | TC_Prereg_FetchAvailabilityDataByCenterID_14 | Given a `registrationCenterId` at a boundary length/format, when the caller submits `GET /preregistration/v1/applications/appointment/slots/availability/{registrationCenterId}` | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_FetchAvailabilityDataByCenterID_15 | Given the same `GET /preregistration/v1/applications/appointment/slots/availability/{registrationCenterId}` request is made twice in a row, when the second call is made | TODO — expect an identical result both times (read-only, so trivially idempotent); no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |

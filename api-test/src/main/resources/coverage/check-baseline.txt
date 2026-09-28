@@ -6,6 +6,22 @@
 # `check --keys` prints the exact line for every open gap. Prefer fixing over baselining:
 # only add a line when the gap is intentional, and say why.
 
+# --- Real endpoints intentionally without API tests ---------------------------------------------
 unmapped-endpoint POST /preregistration/v1/internal/notification  # internal-only mapping, not routed through the public gateway (triaged in COVERAGE_MATRIX_HANDOFF.md gotcha 23)
-unmapped-endpoint PUT /preregistration/v1/internal/applications/appointment/{preRegistrationId}  # internal-only mapping, called by the batch job, not the public API (gotcha 23)
-unmapped-endpoint POST /preregistration/v1/login/sendOtp  # deprecated in favour of /login/sendOtp/langcode, which SendOtp covers (gotcha 23)
+unmapped-endpoint POST /preregistration/v1/login/sendOtp  # @Deprecated(since = "1.2.0", forRemoval = true) in LoginController; SendOtp covers its replacement /login/sendOtp/langcode
+
+# --- Dormant YAML files (never referenced by any Suite.xml in git history, no uniqueIdentifier) ---
+unwired-yml preReg/AuditLog/AuditLog.yml  # DB audit-log validator cases (endPoint is SQL, for PreregAuditValidator); never wired into preregSuite.xml — wire it or delete it as a separate decision
+unwired-yml preReg/BookMultipleAppointment/BookMultipleAppointment.yml  # never wired into preregSuite.xml; multi-booking is covered by bookAppointmentByPRID (POST /applications/appointment)
+unwired-yml preReg/UpdatePridStatus/UpdatePridStatus.yml  # never wired; 0 bytes since the MOSIP-35916 folder rename (#730) — superseded by UpdatePreRegStatus; delete as a separate decision
+empty-yml preReg/UpdatePridStatus/UpdatePridStatus.yml  # same file as above: empty upstream since MOSIP-35916 (#730), not an accidental local emptying
+
+# --- YAML endPoints that match no controller in this repo's source ------------------------------
+# These call /preregistration/v1/appointment/... ; the real mappings are /applications/appointment/...
+# (AppointmentController). No test script rewrites the path, so they pass only if the environment's
+# gateway maps the old path. Verify against a live run, then fix the endPoint: or delete the entry.
+unreachable-endpoint preReg/GetAppointmentDetails GET /preregistration/v1/appointment/{preRegistrationId}  # legacy booking-service path; not verifiable offline (see comment above) — flagged ⚠️ in GetAppointmentDetails.md
+unreachable-endpoint preReg/CancelAppointment PUT /preregistration/v1/appointment/{preRegistrationId}  # legacy booking-service path; not verifiable offline (see comment above) — flagged in CancelAppointment.md
+unreachable-endpoint preReg/GetAvailableSlotForRegCentreId GET /preregistration/v1/appointment/availability/{registrationCenterId}  # legacy booking-service path; not verifiable offline (see comment above)
+unreachable-endpoint preReg/GetPRIDForRegCent GET /preregistration/v1/appointment/preRegistrationId/{registrationCenterId}?from_date=2020-10-01&to_date=2034-10-13  # legacy booking-service path; not verifiable offline (see comment above)
+unreachable-endpoint preReg/GetPRIDForRegCent GET /preregistration/v1/appointment/preRegistrationId/{registrationCenterId}?from_date=2020-10-01&to_date=2021-10-13  # legacy booking-service path; not verifiable offline (see comment above)

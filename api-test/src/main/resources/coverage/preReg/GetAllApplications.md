@@ -5,8 +5,9 @@
 | Subject code | `PREREG-GETALLAPPLICATIONS` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-08-10 |
+| Last updated | 2026-09-25 |
 | Unit type | `endpoint` |
+| Stories | MOSIP-17633 |
 
 **Units**
 
@@ -29,7 +30,7 @@ subject: preReg/GetAllApplications
 subject_code: PREREG-GETALLAPPLICATIONS
 domain: api
 owner: unassigned
-last_updated: "2026-08-10"
+last_updated: "2026-09-25"
 unit_type: endpoint
 units:
   - GET /preregistration/v1/applications
@@ -48,6 +49,8 @@ categories:
   - boundary
   - idempotency
   - data_isolation
+stories:
+  - MOSIP-17633
 ```
 
 </details>
@@ -55,7 +58,7 @@ categories:
 <!-- GENERATED:grid -->
 | ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
 |---|---|---|---|---|---|---|---|
-| TC_prereg_GetAllApplications_01 | Given the caller is logged in and has one or more applications, when they submit `GET /preregistration/v1/applications` with no `type` query parameter | Then the response has no `errors` and returns every application the current user owns, regardless of booking type. | positive | integration | ✅ automated | [preReg/GetAllApplications/GetAllApplications.yml::TC_prereg_GetAllApplications_01](../../preReg/GetAllApplications/GetAllApplications.yml#L4) |  |
+| TC_prereg_GetAllApplications_01 | Given the caller is logged in and has one or more applications, when they submit `GET /preregistration/v1/applications` with no `type` query parameter | Then the response has no `errors` and returns every application the current user owns, regardless of booking type. | positive | integration | ✅ automated | [preReg/GetAllApplications/GetAllApplications.yml::TC_prereg_GetAllApplications_01](../../preReg/GetAllApplications/GetAllApplications.yml#L4) | Legacy: REG_TC_116. |
 | TC_Prereg_GetAllApplications_05 | Given a caller with no valid login cookie, when they submit `GET /preregistration/v1/applications` | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetAllApplications_06 | Given a caller holding a role outside `REGISTRATION_OFFICER, INDIVIDUAL, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN`, when they submit `GET /preregistration/v1/applications` | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetAllApplications_07 | Given `GET /preregistration/v1/applications` is a query-param-only GET with no request body, a conventional field-validation case doesn't directly apply to this unit | TODO — clarify with the team, or reclassify as `not_automatable`; no automated case exists yet. | validation | integration | 🟡 not_automated |  |  |
@@ -63,11 +66,11 @@ categories:
 | TC_Prereg_GetAllApplications_09 | Given the current user owns an unusually large number of applications, when they submit `GET /preregistration/v1/applications` | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetAllApplications_10 | Given the same `GET /preregistration/v1/applications` request is made twice in a row, when the second call is made | TODO — expect an identical result set both times (read-only, so trivially idempotent); no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetAllApplications_11 | Given two different applicants are both logged in, when one applicant submits `GET /preregistration/v1/applications` | TODO — expect only their own applications to be returned, never another applicant's; no automated case exists yet. | data_isolation | integration | 🟡 not_automated |  |  |
-| TC_prereg_GetAllApplications_04 | Given a valid `type` value (`NEW_PREREGISTRATION`), when the caller submits `GET /preregistration/v1/applications?type={type}` | Then the response has no `errors` and returns only applications matching that booking type. | positive | integration | ✅ automated | [preReg/GetAllApplications/GetAllApplications.yml::TC_prereg_GetAllApplications_04](../../preReg/GetAllApplications/GetAllApplications.yml#L55) |  |
+| TC_prereg_GetAllApplications_04 | Given a valid `type` value (`NEW_PREREGISTRATION`), when the caller submits `GET /preregistration/v1/applications?type={type}` | Then the response has no `errors` and returns only applications matching that booking type. | positive | integration | ✅ automated | [preReg/GetAllApplications/GetAllApplications.yml::TC_prereg_GetAllApplications_04](../../preReg/GetAllApplications/GetAllApplications.yml#L55) | Legacy: REG_TC_119, TC-MOSIP-17633-11. |
 | TC_Prereg_GetAllApplications_12 | Given a caller with no valid login cookie, when they submit `GET /preregistration/v1/applications?type={type}` | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetAllApplications_13 | Given a caller holding a role outside `REGISTRATION_OFFICER, INDIVIDUAL, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN`, when they submit `GET /preregistration/v1/applications?type={type}` | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
-| TC_prereg_GetAllApplications_02 | Given a `type` value that isn't one of `NEW_PREREGISTRATION`, `LOST_FORGOTTEN_UIN`, `UPDATE_REGISTRATION` (`263gedbdbegegedb`), when the caller submits `GET /preregistration/v1/applications?type={type}` | Then `errors[0].errorCode` = `PRG_APP_016`. | validation | integration | ✅ automated | [preReg/GetAllApplications/GetAllApplications.yml::TC_prereg_GetAllApplications_02](../../preReg/GetAllApplications/GetAllApplications.yml#L18) |  |
-| TC_prereg_GetAllApplications_03 | Given a second, differently-worded invalid `type` value (`erwsdhgqw5dcfbz`), when the caller submits `GET /preregistration/v1/applications?type={type}` | Then `errors[0].errorCode` = `PRG_APP_016` — the same code as row `TC_prereg_GetAllApplications_02` above. | validation | integration | ✅ automated | [preReg/GetAllApplications/GetAllApplications.yml::TC_prereg_GetAllApplications_03](../../preReg/GetAllApplications/GetAllApplications.yml#L37) | Near-duplicate of row `TC_prereg_GetAllApplications_02` — a different invalid string, but the same branch and the same asserted error code. Kept as its own row (rather than folded into that row's Notes) so `check`'s orphan-test-case gap has something to point at. |
+| TC_prereg_GetAllApplications_02 | Given a `type` value that isn't one of `NEW_PREREGISTRATION`, `LOST_FORGOTTEN_UIN`, `UPDATE_REGISTRATION` (`263gedbdbegegedb`), when the caller submits `GET /preregistration/v1/applications?type={type}` | Then `errors[0].errorCode` = `PRG_APP_016`. | validation | integration | ✅ automated | [preReg/GetAllApplications/GetAllApplications.yml::TC_prereg_GetAllApplications_02](../../preReg/GetAllApplications/GetAllApplications.yml#L18) | Legacy: REG_TC_117, TC-MOSIP-17633-12. |
+| TC_prereg_GetAllApplications_03 | Given a second, differently-worded invalid `type` value (`erwsdhgqw5dcfbz`), when the caller submits `GET /preregistration/v1/applications?type={type}` | Then `errors[0].errorCode` = `PRG_APP_016` — the same code as row `TC_prereg_GetAllApplications_02` above. | validation | integration | ✅ automated | [preReg/GetAllApplications/GetAllApplications.yml::TC_prereg_GetAllApplications_03](../../preReg/GetAllApplications/GetAllApplications.yml#L37) | Near-duplicate of row `TC_prereg_GetAllApplications_02` — a different invalid string, but the same branch and the same asserted error code. Kept as its own row (rather than folded into that row's Notes) so `check`'s orphan-test-case gap has something to point at. Legacy: REG_TC_118. |
 | TC_Prereg_GetAllApplications_14 | Given a `type` value that is syntactically a valid enum member but matches zero applications for the current user, when the caller submits `GET /preregistration/v1/applications?type={type}` | TODO — expect an empty result array with HTTP 200, not an error; no automated case exists yet. | not_found | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetAllApplications_15 | Given a `type` value at a boundary (e.g. wrong case, trailing whitespace), when the caller submits `GET /preregistration/v1/applications?type={type}` | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetAllApplications_16 | Given the same `GET /preregistration/v1/applications?type={type}` request is made twice in a row, when the second call is made | TODO — expect an identical result set both times (read-only, so trivially idempotent); no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |

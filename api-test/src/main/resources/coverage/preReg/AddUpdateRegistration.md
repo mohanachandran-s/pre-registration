@@ -5,8 +5,9 @@
 | Subject code | `PREREG-ADDUPDATEREGISTRATION` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-08-07 |
+| Last updated | 2026-09-25 |
 | Unit type | `endpoint` |
+| Stories | MOSIP-17633 |
 
 **Units**
 
@@ -28,7 +29,7 @@ subject: preReg/AddUpdateRegistration
 subject_code: PREREG-ADDUPDATEREGISTRATION
 domain: api
 owner: unassigned
-last_updated: "2026-08-07"
+last_updated: "2026-09-25"
 unit_type: endpoint
 units:
   - POST /preregistration/v1/applications/updateregistration
@@ -47,6 +48,8 @@ categories:
   - idempotency
   - data_isolation
   - multilang
+stories:
+  - MOSIP-17633
 ```
 
 </details>
@@ -54,11 +57,11 @@ categories:
 <!-- GENERATED:grid -->
 | ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
 |---|---|---|---|---|---|---|---|
-| TC_prereg_AddUpdateRegistration_01 | Given a valid payload (just a language code), when the caller submits `POST /applications/updateregistration` — iterated once per configured language | Then the response is HTTP 200 with `bookingType` = `UPDATE_REGISTRATION` and `applicationStatusCode` = `SUBMITTED`, for every language. | positive | integration | ✅ automated | [preReg/AddUpdateRegistration/AddUpdateRegistration.yml::TC_prereg_AddUpdateRegistration_01](../../preReg/AddUpdateRegistration/AddUpdateRegistration.yml#L4) |  |
+| TC_prereg_AddUpdateRegistration_01 | Given a valid payload (just a language code), when the caller submits `POST /applications/updateregistration` — iterated once per configured language | Then the response is HTTP 200 with `bookingType` = `UPDATE_REGISTRATION` and `applicationStatusCode` = `SUBMITTED`, for every language. | positive | integration | ✅ automated | [preReg/AddUpdateRegistration/AddUpdateRegistration.yml::TC_prereg_AddUpdateRegistration_01](../../preReg/AddUpdateRegistration/AddUpdateRegistration.yml#L4) | Legacy: REG_TC_122, TC-MOSIP-17633-62. |
 | TC_Prereg_AddUpdateRegistration_05 | Given a caller with no valid login cookie, when they submit an update-registration application | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_AddUpdateRegistration_06 | Given a caller holding a role outside `INDIVIDUAL, REGISTRATION_OFFICER, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN`, when they submit an update-registration application | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
-| TC_prereg_AddUpdateRegistration_02 | Given `langCode` is set to a code the environment's language list doesn't support, when the caller submits the request | Then `errors[0].errorCode` = `PRG_CORE_REQ_014`. | validation | integration | ✅ automated | [preReg/AddUpdateRegistration/AddUpdateRegistration.yml::TC_prereg_AddUpdateRegistration_02](../../preReg/AddUpdateRegistration/AddUpdateRegistration.yml#L24) |  |
-| TC_prereg_AddUpdateRegistration_03 | Given the entire request body is stripped down to an effectively empty payload, when the caller submits the request | Then `errors[0].errorCode` = `PRG_CORE_REQ_003`. | validation | integration | ✅ automated | [preReg/AddUpdateRegistration/AddUpdateRegistration.yml::TC_prereg_AddUpdateRegistration_03](../../preReg/AddUpdateRegistration/AddUpdateRegistration.yml#L46) | ⚠️ Verified `UpdateRegistrationController` registers the same `RequestValidator` (`binder.addValidators(requestValidator)`) as `createPrereg`/`UpdatePreregistration`, so it's subject to the same `.toString()`-vs-`.getCode()` fragility documented on `createPrereg.md` row `TC_Prereg_CreatePrereg_17`. |
+| TC_prereg_AddUpdateRegistration_02 | Given `langCode` is set to a code the environment's language list doesn't support, when the caller submits the request | Then `errors[0].errorCode` = `PRG_CORE_REQ_014`. | validation | integration | ✅ automated | [preReg/AddUpdateRegistration/AddUpdateRegistration.yml::TC_prereg_AddUpdateRegistration_02](../../preReg/AddUpdateRegistration/AddUpdateRegistration.yml#L24) | Legacy: REG_TC_123, TC-MOSIP-17633-64. |
+| TC_prereg_AddUpdateRegistration_03 | Given the entire request body is stripped down to an effectively empty payload, when the caller submits the request | Then `errors[0].errorCode` = `PRG_CORE_REQ_003`. | validation | integration | ✅ automated | [preReg/AddUpdateRegistration/AddUpdateRegistration.yml::TC_prereg_AddUpdateRegistration_03](../../preReg/AddUpdateRegistration/AddUpdateRegistration.yml#L46) | ⚠️ Verified `UpdateRegistrationController` registers the same `RequestValidator` (`binder.addValidators(requestValidator)`) as `createPrereg`/`UpdatePreregistration`, so it's subject to the same `.toString()`-vs-`.getCode()` fragility documented on `createPrereg.md` row `TC_Prereg_CreatePrereg_17`. Legacy: TC-MOSIP-17633-63. |
 | TC_prereg_AddUpdateRegistration_04 | Given `langCode` is omitted from the request, when the caller submits the request | Then `errors[0].errorCode` = `PRG_CORE_REQ_014`. | validation | integration | ✅ automated | [preReg/AddUpdateRegistration/AddUpdateRegistration.yml::TC_prereg_AddUpdateRegistration_04](../../preReg/AddUpdateRegistration/AddUpdateRegistration.yml#L68) |  |
 | TC_Prereg_AddUpdateRegistration_07 | Given this is a resource-creation endpoint with no path parameter, a conventional "not-found" case doesn't directly apply here | TODO — clarify with the team what a not_found scenario should mean for this endpoint, or reclassify as `not_automatable`; no automated case exists yet. | not_found | integration | 🟡 not_automated |  |  |
 | TC_Prereg_AddUpdateRegistration_08 | Given `langCode` at a boundary value (e.g. maximum-length or empty-but-present code), when the caller submits the request | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |

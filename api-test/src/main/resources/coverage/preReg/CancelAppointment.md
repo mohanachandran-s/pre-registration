@@ -5,8 +5,9 @@
 | Subject code | `PREREG-CANCELAPPOINTMENT` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-08-11 |
+| Last updated | 2026-09-25 |
 | Unit type | `endpoint` |
+| Stories | MOSIP-11719, MOSIP-17633 |
 
 **Units**
 
@@ -28,7 +29,7 @@ subject: preReg/CancelAppointment
 subject_code: PREREG-CANCELAPPOINTMENT
 domain: api
 owner: unassigned
-last_updated: "2026-08-11"
+last_updated: "2026-09-25"
 unit_type: endpoint
 units:
   - "PUT /preregistration/v1/appointment/{preRegistrationId}"
@@ -47,6 +48,9 @@ categories:
   - idempotency
   - data_isolation
   - dependency_state
+stories:
+  - MOSIP-11719
+  - MOSIP-17633
 ```
 
 </details>
@@ -54,16 +58,16 @@ categories:
 <!-- GENERATED:grid -->
 | ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
 |---|---|---|---|---|---|---|---|
-| TC_prereg_CancelAppointment_01 | Given a `preRegistrationId` with an appointment booked by `bookAppointment`, when the caller submits `PUT /appointment/{preRegistrationId}` — see Notes for a concern about this path | Then the response has no `errors` (`checkErrorsOnlyInResponse: true`). | positive | integration | ✅ automated | [preReg/CancelAppointment/CancelAppointment.yml::TC_prereg_CancelAppointment_01](../../preReg/CancelAppointment/CancelAppointment.yml#L4) | ⚠️ See the Technical details section below — this subject's `endPoint:` may not resolve to any real controller mapping, the same concern documented on `GetAppointmentDetails.md`. |
+| TC_prereg_CancelAppointment_01 | Given a `preRegistrationId` with an appointment booked by `bookAppointment`, when the caller submits `PUT /appointment/{preRegistrationId}` — see Notes for a concern about this path | Then the response has no `errors` (`checkErrorsOnlyInResponse: true`). | positive | integration | ✅ automated | [preReg/CancelAppointment/CancelAppointment.yml::TC_prereg_CancelAppointment_01](../../preReg/CancelAppointment/CancelAppointment.yml#L4) | ⚠️ See the Technical details section below — this subject's `endPoint:` may not resolve to any real controller mapping, the same concern documented on `GetAppointmentDetails.md`. Legacy: REG_TC_105, TC-MOSIP-11719-14, TC-MOSIP-17633-31. |
 | TC_Prereg_CancelAppointment_06 | Given a caller with no valid login cookie, when they attempt to cancel an appointment | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_CancelAppointment_07 | Given a caller holding a role outside `REGISTRATION_OFFICER, INDIVIDUAL, PRE_REGISTRATION_ADMIN`, when they attempt to cancel an appointment | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
 | TC_Prereg_CancelAppointment_08 | Given this is a path-param-only PUT with no request body, a conventional field-validation case doesn't directly apply here | TODO — clarify with the team, or reclassify as `not_automatable`; no automated case exists yet. | validation | integration | 🟡 not_automated |  |  |
-| TC_prereg_CancelAppointment_04 | Given a `preRegistrationId` value that doesn't correspond to any stored application, when the caller submits the request | Then `errors[0].errorCode` = `PRG_APP_013`. | not_found | integration | ✅ automated | [preReg/CancelAppointment/CancelAppointment.yml::TC_prereg_CancelAppointment_04](../../preReg/CancelAppointment/CancelAppointment.yml#L59) |  |
+| TC_prereg_CancelAppointment_04 | Given a `preRegistrationId` value that doesn't correspond to any stored application, when the caller submits the request | Then `errors[0].errorCode` = `PRG_APP_013`. | not_found | integration | ✅ automated | [preReg/CancelAppointment/CancelAppointment.yml::TC_prereg_CancelAppointment_04](../../preReg/CancelAppointment/CancelAppointment.yml#L59) | Legacy: REG_TC_108, TC-MOSIP-17633-35. |
 | TC_Prereg_CancelAppointment_09 | Given a `preRegistrationId` at a boundary length/format, when the caller submits the cancellation request | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
-| TC_prereg_CancelAppointment_02 | Given an appointment that was already canceled, when the caller submits a second cancellation request for the same `preRegistrationId` | Then `errors[0].errorCode` = `PRG_BOOK_RCI_013`. | idempotency | integration | ✅ automated | [preReg/CancelAppointment/CancelAppointment.yml::TC_prereg_CancelAppointment_02](../../preReg/CancelAppointment/CancelAppointment.yml#L19) | Genuinely proves the operation isn't naively idempotent — repeating it is explicitly rejected rather than silently no-oping. See Technical details for the `PRG_BOOK_RCI_*` not-in-this-repo caveat. |
+| TC_prereg_CancelAppointment_02 | Given an appointment that was already canceled, when the caller submits a second cancellation request for the same `preRegistrationId` | Then `errors[0].errorCode` = `PRG_BOOK_RCI_013`. | idempotency | integration | ✅ automated | [preReg/CancelAppointment/CancelAppointment.yml::TC_prereg_CancelAppointment_02](../../preReg/CancelAppointment/CancelAppointment.yml#L19) | Genuinely proves the operation isn't naively idempotent — repeating it is explicitly rejected rather than silently no-oping. See Technical details for the `PRG_BOOK_RCI_*` not-in-this-repo caveat. Legacy: REG_TC_106, TC-MOSIP-17633-32. |
 | TC_Prereg_CancelAppointment_10 | Given two different applicants' applications, when one applicant's session attempts to cancel the other's appointment | TODO — expect the cross-applicant cancellation to be rejected; no automated case exists yet. | data_isolation | integration | 🟡 not_automated |  |  |
-| TC_prereg_CancelAppointment_03 | Given a `preRegistrationId` whose application state is "incomplete" (no appointment ever successfully booked), when the caller attempts to cancel an appointment for it | Then `errors[0].errorCode` = `PRG_BOOK_RCI_013`. | dependency_state | integration | ✅ automated | [preReg/CancelAppointment/CancelAppointment.yml::TC_prereg_CancelAppointment_03](../../preReg/CancelAppointment/CancelAppointment.yml#L39) |  |
-| TC_prereg_CancelAppointment_05 | Given a `preRegistrationId` whose status was explicitly set to a pending-appointment state by `UpdatePreRegStatus` (`additionalDependencies: TC_prereg_UpdatePreRegStatus_04`), when the caller attempts to cancel it | Then `errors[0].errorCode` = `PRG_BOOK_RCI_013`. | dependency_state | integration | ✅ automated | [preReg/CancelAppointment/CancelAppointment.yml::TC_prereg_CancelAppointment_05](../../preReg/CancelAppointment/CancelAppointment.yml#L77) |  |
+| TC_prereg_CancelAppointment_03 | Given a `preRegistrationId` whose application state is "incomplete" (no appointment ever successfully booked), when the caller attempts to cancel an appointment for it | Then `errors[0].errorCode` = `PRG_BOOK_RCI_013`. | dependency_state | integration | ✅ automated | [preReg/CancelAppointment/CancelAppointment.yml::TC_prereg_CancelAppointment_03](../../preReg/CancelAppointment/CancelAppointment.yml#L39) | Legacy: REG_TC_107, TC-MOSIP-17633-33. |
+| TC_prereg_CancelAppointment_05 | Given a `preRegistrationId` whose status was explicitly set to a pending-appointment state by `UpdatePreRegStatus` (`additionalDependencies: TC_prereg_UpdatePreRegStatus_04`), when the caller attempts to cancel it | Then `errors[0].errorCode` = `PRG_BOOK_RCI_013`. | dependency_state | integration | ✅ automated | [preReg/CancelAppointment/CancelAppointment.yml::TC_prereg_CancelAppointment_05](../../preReg/CancelAppointment/CancelAppointment.yml#L77) | Legacy: TC-MOSIP-17633-34. |
 | TC_prereg_CancelAppointment_01-dependency | Given the same case as the positive row above, when the cancellation happens right after `bookAppointment` booked the appointment (`additionalDependencies: TC_prereg_BookAppointment_02`) | Then the cancellation succeeds, proving the call genuinely depends on that upstream booking. | dependency_state | integration | ✅ automated | [preReg/CancelAppointment/CancelAppointment.yml::TC_prereg_CancelAppointment_01](../../preReg/CancelAppointment/CancelAppointment.yml#L4) | Same underlying case as the `positive` row above. |
 <!-- /GENERATED:grid -->
 

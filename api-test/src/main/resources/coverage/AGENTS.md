@@ -1,7 +1,7 @@
 # Authoring playbook — apitest-prereg coverage matrix
 
 Read this before filling in a single row. It assumes you've already read `README.md` in this
-directory for the format/legend and `COVERAGE_MATRIX_HANDOFF.md` at the repo root for the design
+directory for the format/legend and `docs/coverage-matrix/design-record.md` in `mosip-functional-tests` for the design
 decisions this all follows.
 
 ## Every change that touches a test case — the non-negotiable checklist
@@ -17,7 +17,12 @@ skipping a step only moves the failure later.
    wired case must have one.
 2. **`restMethod:` matches the wired script class's verb** (`SimplePost` → post,
    `PutWithPathParam` → put, `DeleteWithParam` → delete, ...).
-3. **Author the row** in the subject's matrix file (see "Filling a row"): a new case gets its own
+3. **Read the subject's existing rows first, then author only what's missing** (see "Filling a row").
+   Before adding a scenario — especially a batch of them from a new story — list which ones the file
+   already covers (same endpoint, same condition, often the same error code); for those, add the
+   story key / `Legacy:` note to the existing row instead of a new one. `check` warns
+   (`possible-duplicate-row`) when a new row looks like an existing one — resolve every such warning
+   before you finish. Then author the row: a new case gets its own
    row or is added to the `Test` of the row it genuinely covers; a renamed case gets its `Test`
    reference updated; a deleted case's row goes to `🟡 not_automated` (never deleted).
 4. **Not automated yet?** It's still a row: `🟡 not_automated` in the subject's file, or — if no
@@ -29,12 +34,15 @@ skipping a step only moves the failure later.
 ### Scenarios from outside the code (manual tests, the old Excel sheet, a story)
 
 - Find the matching row first (same endpoint, same condition). If one exists, don't duplicate it —
-  append `Legacy: <old test-case no.>` to its Notes so the old reference stays searchable.
+  append `Legacy: <old test-case no.>` to its Notes so the old reference stays searchable
+  (several: `Legacy: A, B`). Every old number is listed in `legacy-ids.txt`, and `check` fails
+  (`legacy-id-missing`) until each one appears in some matrix file or carries an out-of-scope reason.
 - Otherwise add a `🟡 not_automated` row with a full Given/When/Then, in the subject whose endpoint
   it calls, or the `planned/` file for an endpoint with no YAML.
 - Put the story key in the file's `stories:` front-matter list (see `README.md` § Governance).
 - Out of scope for this matrix: UI flows, batch-job end-to-end journeys, other modules' APIs (e.g.
-  masterdata) — record those in the owning module's matrix, not here.
+  masterdata) — record those in the owning module's matrix, not here; in `legacy-ids.txt` their
+  line gets `# out of scope: <why / where it lives>`.
 
 ## Adding a subject
 

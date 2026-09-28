@@ -5,8 +5,9 @@
 | Subject code | `PREREG-DELETEBOOKING` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-08-11 |
+| Last updated | 2026-09-25 |
 | Unit type | `endpoint` |
+| Stories | MOSIP-11719, MOSIP-17633 |
 
 **Units**
 
@@ -28,7 +29,7 @@ subject: preReg/DeleteBooking
 subject_code: PREREG-DELETEBOOKING
 domain: api
 owner: unassigned
-last_updated: "2026-08-11"
+last_updated: "2026-09-25"
 unit_type: endpoint
 units:
   - "DELETE /preregistration/v1/applications/appointment?preRegistrationId={preRegistrationId}"
@@ -47,6 +48,9 @@ categories:
   - idempotency
   - data_isolation
   - dependency_state
+stories:
+  - MOSIP-11719
+  - MOSIP-17633
 ```
 
 </details>
@@ -54,11 +58,11 @@ categories:
 <!-- GENERATED:grid -->
 | ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
 |---|---|---|---|---|---|---|---|
-| TC_prereg_DeleteBooking_01 | Given a `preRegistrationId` with an appointment booked by `bookAppointment` (`additionalDependencies: TC_prereg_BookAppointment_01`), when the caller submits `DELETE /applications/appointment?preRegistrationId=...` | Then `deletedBy` matches the logged-in caller's own user ID. | positive | integration | ✅ automated | [preReg/DeleteBooking/DeleteBooking.yml::TC_prereg_DeleteBooking_01](../../preReg/DeleteBooking/DeleteBooking.yml#L4) | This is the *only* automated case in this subject's entire YAML — every other category below is completely unautomated, including basic not-found/validation coverage that every sibling appointment endpoint in this batch has at least one case for. |
+| TC_prereg_DeleteBooking_01 | Given a `preRegistrationId` with an appointment booked by `bookAppointment` (`additionalDependencies: TC_prereg_BookAppointment_01`), when the caller submits `DELETE /applications/appointment?preRegistrationId=...` | Then `deletedBy` matches the logged-in caller's own user ID. | positive | integration | ✅ automated | [preReg/DeleteBooking/DeleteBooking.yml::TC_prereg_DeleteBooking_01](../../preReg/DeleteBooking/DeleteBooking.yml#L4) | This is the *only* automated case in this subject's entire YAML — every other category below is completely unautomated, including basic not-found/validation coverage that every sibling appointment endpoint in this batch has at least one case for. Legacy: REG_TC_111, TC-MOSIP-11719-16, TC-MOSIP-17633-23. |
 | TC_Prereg_DeleteBooking_02 | Given a caller with no valid login cookie, when they attempt to discard a booking | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_DeleteBooking_03 | Given a caller holding a role outside `REGISTRATION_OFFICER, INDIVIDUAL, PRE_REGISTRATION_ADMIN`, when they attempt to discard a booking | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
 | TC_Prereg_DeleteBooking_04 | Given this is a query-param-only DELETE with no request body, a conventional field-validation case doesn't directly apply here | TODO — clarify with the team, or reclassify as `not_automatable`; no automated case exists yet. | validation | integration | 🟡 not_automated |  |  |
-| TC_Prereg_DeleteBooking_05 | Given a `preRegistrationId` value that doesn't correspond to any stored application, when the caller submits the request | TODO — no automated case exists yet; every sibling appointment subject in this batch has at least one not-found case, this one has none. | not_found | integration | 🟡 not_automated |  |  |
+| TC_Prereg_DeleteBooking_05 | Given a `preRegistrationId` value that doesn't correspond to any stored application, when the caller submits the request | Then the call fails with `PRG_BOOK_RCI_013` ("Booking data not found") — but as HTTP 500, per the legacy manual run. | not_found | integration | 🟡 not_automated |  | ⚠️ The legacy manual run got HTTP 500 (a server error) for an unknown `preRegistrationId` — a client mistake should be a 4xx; worth a bug report once automated. Legacy: TC-MOSIP-17633-24. |
 | TC_Prereg_DeleteBooking_06 | Given a `preRegistrationId` at a boundary length/format, when the caller submits the request | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_DeleteBooking_07 | Given a booking is discarded twice in a row for the same `preRegistrationId`, when the second call is made | TODO — expect the second call to fail with a not-found-style error (nothing left to discard) rather than silently succeeding again; no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |
 | TC_Prereg_DeleteBooking_08 | Given two different applicants' applications, when one applicant's session attempts to discard the other's booking | TODO — expect the cross-applicant delete to be rejected; no automated case exists yet. | data_isolation | integration | 🟡 not_automated |  |  |

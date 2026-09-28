@@ -5,7 +5,7 @@ UpdatePreRegStatus:
       description: Validate that updating the pre registration status is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
-      restMethod: get
+      restMethod: put
       inputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatus
       outputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatusResult
       input: '{
@@ -20,7 +20,7 @@ UpdatePreRegStatus:
       description: Validate that updating the pre registration status fails or returns an appropriate error when the pre registration is expired
       role: batch
       checkErrorsOnlyInResponse: true
-      restMethod: get
+      restMethod: put
       inputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatus
       outputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatusResult
       input: '{
@@ -35,7 +35,7 @@ UpdatePreRegStatus:
       description: Validate that updating the pre registration status for a pre registration booked by Pre Registration ID is successfully processed when all mandatory fields are provided with valid values   
       role: batch
       checkErrorsOnlyInResponse: true
-      restMethod: get
+      restMethod: put
       inputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatus
       outputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatusResult
       input: '{
@@ -50,7 +50,7 @@ UpdatePreRegStatus:
       description: Validate that updating the pre registration status is successfully processed when valid input parameters are provided
       role: batch
       checkErrorsOnlyInResponse: true
-      restMethod: get
+      restMethod: put
       inputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatus
       outputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatusResult
       input: '{
@@ -65,7 +65,7 @@ UpdatePreRegStatus:
       description: Validate that updating the pre registration status for a Correction Application is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
-      restMethod: get
+      restMethod: put
       inputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatus
       outputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatusResult
       input: '{
@@ -80,7 +80,7 @@ UpdatePreRegStatus:
       description: Validate that updating the pre registration status for a fully deleted pre registration is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
-      restMethod: get
+      restMethod: put
       inputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatus
       outputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatusResult
       input: '{
@@ -95,7 +95,7 @@ UpdatePreRegStatus:
       description: Validate that updating the pre registration status to cancel an appointment is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
-      restMethod: get
+      restMethod: put
       inputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatus
       outputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatusResult
       input: '{
@@ -110,7 +110,7 @@ UpdatePreRegStatus:
       description: Validate that updating the pre registration status to cancel an applications appointment is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
-      restMethod: get
+      restMethod: put
       inputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatus
       outputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatusResult
       input: '{
@@ -125,7 +125,7 @@ UpdatePreRegStatus:
       description: Validate that updating the pre registration status fails or has no effect when the pre registration status field is not provided
       role: batch
       checkErrorsOnlyInResponse: true
-      restMethod: get
+      restMethod: put
       inputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatus
       outputTemplate: preReg/error
       input: '{
@@ -145,7 +145,7 @@ UpdatePreRegStatus:
       description: Validate that updating the pre registration status fails when an invalid Pre Registration ID is provided
       role: batch
       checkErrorsOnlyInResponse: true
-      restMethod: get
+      restMethod: put
       inputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatus
       outputTemplate: preReg/error
       input: '{

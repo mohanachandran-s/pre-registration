@@ -5,8 +5,9 @@
 | Subject code | `PREREG-GETALLAPPLICATIONSWITHAPPLICATIONID` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-08-07 |
+| Last updated | 2026-09-25 |
 | Unit type | `endpoint` |
+| Stories | MOSIP-17633 |
 
 **Units**
 
@@ -28,7 +29,7 @@ subject: preReg/GetAllApplicationsWithapplicationId
 subject_code: PREREG-GETALLAPPLICATIONSWITHAPPLICATIONID
 domain: api
 owner: unassigned
-last_updated: "2026-08-07"
+last_updated: "2026-09-25"
 unit_type: endpoint
 units:
   - "GET /preregistration/v1/applications/{applicationId}"
@@ -47,6 +48,8 @@ categories:
   - idempotency
   - data_isolation
   - dependency_state
+stories:
+  - MOSIP-17633
 ```
 
 </details>
@@ -54,12 +57,12 @@ categories:
 <!-- GENERATED:grid -->
 | ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
 |---|---|---|---|---|---|---|---|
-| TC_prereg_GetAllApplicationsWithapplicationId_01 | Given an `applicationId` created earlier by `createPrereg`, when the caller submits `GET /applications/{applicationId}` | Then the response has no `errors` and returns that application's tracking record. | positive | integration | ✅ automated | [preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId.yml::TC_prereg_GetAllApplicationsWithapplicationId_01](../../preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId.yml#L4) |  |
-| TC_prereg_GetAllApplicationsWithapplicationId_02 | Given the same `applicationId` as the positive case above, when the caller submits the request a second time | Then the response has no `errors` (`checkErrorsOnlyInResponse: true`) — the test's own assertion is only "no errors happened," not "the application's status is actually expired." | positive | integration | ✅ automated | [preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId.yml::TC_prereg_GetAllApplicationsWithapplicationId_02](../../preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId.yml#L18) | 🛑 **Mislabeled test, not real "expired" coverage.** The YAML case name and description both claim this tests fetching an application "when the application status is expired," but its `applicationId` is sourced from the exact same `$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$` token as the row above, there's no step anywhere in this chain that expires the application first, and the output template (`checkErrorsOnlyInResponse: true` against an effectively empty result template) never checks any status-related field. As written, this case is a duplicate of the positive row above, not expired-application coverage — the `not_found`/`boundary` gap this test name implies is still genuinely open. |
+| TC_prereg_GetAllApplicationsWithapplicationId_01 | Given an `applicationId` created earlier by `createPrereg`, when the caller submits `GET /applications/{applicationId}` | Then the response has no `errors` and returns that application's tracking record. | positive | integration | ✅ automated | [preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId.yml::TC_prereg_GetAllApplicationsWithapplicationId_01](../../preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId.yml#L4) | Legacy: TC-MOSIP-17633-13, REG_TC_210, REG_TC_231. |
+| TC_prereg_GetAllApplicationsWithapplicationId_02 | Given the same `applicationId` as the positive case above, when the caller submits the request a second time | Then the response has no `errors` (`checkErrorsOnlyInResponse: true`) — the test's own assertion is only "no errors happened," not "the application's status is actually expired." | positive | integration | ✅ automated | [preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId.yml::TC_prereg_GetAllApplicationsWithapplicationId_02](../../preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId.yml#L18) | 🛑 **Mislabeled test, not real "expired" coverage.** The YAML case name and description both claim this tests fetching an application "when the application status is expired," but its `applicationId` is sourced from the exact same `$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$` token as the row above, there's no step anywhere in this chain that expires the application first, and the output template (`checkErrorsOnlyInResponse: true` against an effectively empty result template) never checks any status-related field. As written, this case is a duplicate of the positive row above, not expired-application coverage — the `not_found`/`boundary` gap this test name implies is still genuinely open. Legacy: REG_TC_232. |
 | TC_Prereg_GetAllApplicationsWithapplicationId_04 | Given a caller with no valid login cookie, when they request an application by `applicationId` | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetAllApplicationsWithapplicationId_05 | Given a caller holding a role outside `REGISTRATION_OFFICER, INDIVIDUAL`, when they request an application by `applicationId` | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetAllApplicationsWithapplicationId_06 | Given this is a path-param-only GET with no request body, a conventional field-validation case doesn't directly apply here | TODO — clarify with the team, or reclassify as `not_automatable`; no automated case exists yet. | validation | integration | 🟡 not_automated |  |  |
-| TC_prereg_GetAllApplicationsWithapplicationId_03 | Given an `applicationId` value that is syntactically odd (`26363gdgdb@636e4gdg`) but not rejected by any format check, when the caller submits the request | Then `errors[0].errorCode` = `PRG_APP_013` (record not found). | not_found | integration | ✅ automated | [preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId.yml::TC_prereg_GetAllApplicationsWithapplicationId_03](../../preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId.yml#L32) | Same "invalid ID actually just means not-found" behavior documented on `GetApplicationWithPrId.md` row `TC_prereg_GetApplicationWithPrId_01` — this is the identical controller method. |
+| TC_prereg_GetAllApplicationsWithapplicationId_03 | Given an `applicationId` value that is syntactically odd (`26363gdgdb@636e4gdg`) but not rejected by any format check, when the caller submits the request | Then `errors[0].errorCode` = `PRG_APP_013` (record not found). | not_found | integration | ✅ automated | [preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId.yml::TC_prereg_GetAllApplicationsWithapplicationId_03](../../preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId.yml#L32) | Same "invalid ID actually just means not-found" behavior documented on `GetApplicationWithPrId.md` row `TC_prereg_GetApplicationWithPrId_01` — this is the identical controller method. Legacy: TC-MOSIP-17633-14, REG_TC_211, REG_TC_233. |
 | TC_Prereg_GetAllApplicationsWithapplicationId_07 | Given an `applicationId` at a boundary length/format, when the caller requests it | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetAllApplicationsWithapplicationId_08 | Given the same `applicationId` is fetched twice in a row, when the second read is made | TODO — expect an identical response both times (read-only, so trivially idempotent); no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetAllApplicationsWithapplicationId_09 | Given two different applicants' applications, when one applicant's session requests the other's `applicationId` | TODO — expect the cross-applicant read to be rejected; no automated case exists yet. | data_isolation | integration | 🟡 not_automated |  |  |

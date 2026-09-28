@@ -5,12 +5,12 @@
 | Subject code | `PREREG-DELETESPECIFICDOCFORAPRID` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-08-10 |
+| Last updated | 2026-09-25 |
 | Unit type | `endpoint` |
 
 **Units**
 
-- `POST /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}`
+- `DELETE /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}`
 
 **Coverage summary**
 
@@ -28,10 +28,10 @@ subject: preReg/DeleteSpecificDocForaPRID
 subject_code: PREREG-DELETESPECIFICDOCFORAPRID
 domain: api
 owner: unassigned
-last_updated: "2026-08-10"
+last_updated: "2026-09-25"
 unit_type: endpoint
 units:
-  - "POST /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}"
+  - "DELETE /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}"
 summary:
   total: 10
   automated: 4
@@ -54,12 +54,12 @@ categories:
 <!-- GENERATED:grid -->
 | ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
 |---|---|---|---|---|---|---|---|
-| TC_prereg_DeleteSpecificDocForaPRID_01 | Given a `preRegistrationId` and `documentId` from a document uploaded earlier, when the caller submits a delete request for `/documents/{documentId}?preRegistrationId=...` — see Notes on the real HTTP verb | Then the response has no `errors` (`checkErrorsOnlyInResponse: true`) and the document is removed. | positive | integration | ✅ automated | [preReg/DeleteSpecificDocForaPRID/DeleteSpecificDocForaPRID.yml::TC_prereg_DeleteSpecificDocForaPRID_01](../../preReg/DeleteSpecificDocForaPRID/DeleteSpecificDocForaPRID.yml#L4) | ⚠️ `restMethod: post` in the YAML is inaccurate — see Technical details below. |
+| TC_prereg_DeleteSpecificDocForaPRID_01 | Given a `preRegistrationId` and `documentId` from a document uploaded earlier, when the caller submits a delete request for `/documents/{documentId}?preRegistrationId=...` — see Notes on the real HTTP verb | Then the response has no `errors` (`checkErrorsOnlyInResponse: true`) and the document is removed. | positive | integration | ✅ automated | [preReg/DeleteSpecificDocForaPRID/DeleteSpecificDocForaPRID.yml::TC_prereg_DeleteSpecificDocForaPRID_01](../../preReg/DeleteSpecificDocForaPRID/DeleteSpecificDocForaPRID.yml#L4) | ⚠️ `restMethod: post` in the YAML was inaccurate (corrected to `delete` 2026-09-25) — see Technical details below. Legacy: REG_TC_101. |
 | TC_Prereg_DeleteSpecificDocForaPRID_04 | Given a caller with no valid login cookie, when they attempt to delete a specific document | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_DeleteSpecificDocForaPRID_05 | Given a caller holding a role outside `INDIVIDUAL` (the only role this endpoint allows — see Notes), when they attempt to delete a specific document | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
 | TC_Prereg_DeleteSpecificDocForaPRID_06 | Given this is a path/query-param-only delete with no request body, a conventional field-validation case doesn't directly apply here | TODO — clarify with the team, or reclassify as `not_automatable`; no automated case exists yet. | validation | integration | 🟡 not_automated |  |  |
-| TC_prereg_DeleteSpecificDocForaPRID_02 | Given a `preRegistrationId` value that doesn't correspond to any stored application (`hnyfv_preRegistrationId`), when the caller submits the delete request | Then `errors[0].errorCode` = `PRG_PAM_APP_005`. | not_found | integration | ✅ automated | [preReg/DeleteSpecificDocForaPRID/DeleteSpecificDocForaPRID.yml::TC_prereg_DeleteSpecificDocForaPRID_02](../../preReg/DeleteSpecificDocForaPRID/DeleteSpecificDocForaPRID.yml#L20) | Confirmed against `DocumentService.deleteDocument`'s source: it calls `serviceUtil.getPreRegInfoRestService(preRegistrationId)` first, same `PRG_PAM_APP_005`-relay pattern as `CopyDocument.md`/`GetSpecificDocumentforaPRID.md`. |
-| TC_prereg_DeleteSpecificDocForaPRID_03 | Given a `documentId` value that doesn't correspond to any stored document (`53fhv@fgjd_Smoke_sid_docId$`), when the caller submits the delete request | Then `errors[0].errorCode` = `PRG_PAM_DOC_005` per the test's own assertion — but see Notes, the real code path likely doesn't reach this cleanly. | not_found | integration | ✅ automated | [preReg/DeleteSpecificDocForaPRID/DeleteSpecificDocForaPRID.yml::TC_prereg_DeleteSpecificDocForaPRID_03](../../preReg/DeleteSpecificDocForaPRID/DeleteSpecificDocForaPRID.yml#L39) | 🛑 Same unguarded-null-dereference pattern documented on `GetSpecificDocumentforaPRID.md` row `TC_prereg_GetSpecificDocumentforaPRID_03` — see Technical details below. Also note this case's `documentId` value (`53fhv@fgjd_Smoke_sid_docId$`) looks like a corrupted/incomplete `$ID:...$` token reference rather than an intentionally-crafted invalid string — it happens to still be a nonexistent ID either way, so the test's negative intent survives, but it's likely not what the author meant to type. |
+| TC_prereg_DeleteSpecificDocForaPRID_02 | Given a `preRegistrationId` value that doesn't correspond to any stored application (`hnyfv_preRegistrationId`), when the caller submits the delete request | Then `errors[0].errorCode` = `PRG_PAM_APP_005`. | not_found | integration | ✅ automated | [preReg/DeleteSpecificDocForaPRID/DeleteSpecificDocForaPRID.yml::TC_prereg_DeleteSpecificDocForaPRID_02](../../preReg/DeleteSpecificDocForaPRID/DeleteSpecificDocForaPRID.yml#L20) | Confirmed against `DocumentService.deleteDocument`'s source: it calls `serviceUtil.getPreRegInfoRestService(preRegistrationId)` first, same `PRG_PAM_APP_005`-relay pattern as `CopyDocument.md`/`GetSpecificDocumentforaPRID.md`. Legacy: REG_TC_104. |
+| TC_prereg_DeleteSpecificDocForaPRID_03 | Given a `documentId` value that doesn't correspond to any stored document (`53fhv@fgjd_Smoke_sid_docId$`), when the caller submits the delete request | Then `errors[0].errorCode` = `PRG_PAM_DOC_005` per the test's own assertion — but see Notes, the real code path likely doesn't reach this cleanly. | not_found | integration | ✅ automated | [preReg/DeleteSpecificDocForaPRID/DeleteSpecificDocForaPRID.yml::TC_prereg_DeleteSpecificDocForaPRID_03](../../preReg/DeleteSpecificDocForaPRID/DeleteSpecificDocForaPRID.yml#L39) | 🛑 Same unguarded-null-dereference pattern documented on `GetSpecificDocumentforaPRID.md` row `TC_prereg_GetSpecificDocumentforaPRID_03` — see Technical details below. Also note this case's `documentId` value (`53fhv@fgjd_Smoke_sid_docId$`) looks like a corrupted/incomplete `$ID:...$` token reference rather than an intentionally-crafted invalid string — it happens to still be a nonexistent ID either way, so the test's negative intent survives, but it's likely not what the author meant to type. Legacy: REG_TC_102. |
 | TC_Prereg_DeleteSpecificDocForaPRID_07 | Given a `documentId`/`preRegistrationId` combination at a boundary length, when the caller submits the delete request | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_DeleteSpecificDocForaPRID_08 | Given the same document is deleted twice in a row, when the second delete request is made | TODO — expect the second call to fail with a not-found-style error (the document no longer exists) rather than silently succeeding again; no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |
 | TC_Prereg_DeleteSpecificDocForaPRID_09 | Given two different applicants' documents, when one applicant's session attempts to delete the other's document | TODO — expect the cross-applicant delete to be rejected; no automated case exists yet. | data_isolation | integration | 🟡 not_automated |  |  |

@@ -5,8 +5,9 @@
 | Subject code | `PREREG-DELETEPREREGISTRATION` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-08-07 |
+| Last updated | 2026-09-25 |
 | Unit type | `endpoint` |
+| Stories | MOSIP-17633 |
 
 **Units**
 
@@ -28,7 +29,7 @@ subject: preReg/DeletePreRegistration
 subject_code: PREREG-DELETEPREREGISTRATION
 domain: api
 owner: unassigned
-last_updated: "2026-08-07"
+last_updated: "2026-09-25"
 unit_type: endpoint
 units:
   - "DELETE /preregistration/v1/applications/prereg/{preRegistrationId}"
@@ -47,6 +48,8 @@ categories:
   - idempotency
   - data_isolation
   - dependency_state
+stories:
+  - MOSIP-17633
 ```
 
 </details>
@@ -54,11 +57,11 @@ categories:
 <!-- GENERATED:grid -->
 | ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
 |---|---|---|---|---|---|---|---|
-| TC_prereg_DeletePreRegistration_01 | Given an existing pre-registration application, when the applicant deletes it via a valid `preRegistrationId` | Then the response is HTTP 200, a `deletedBy` field is returned, and the application record is deleted. | positive | integration | ✅ automated | [preReg/DeletePreRegistration/DeletePreRegistration.yml::TC_prereg_DeletePreRegistration_01](../../preReg/DeletePreRegistration/DeletePreRegistration.yml#L4) |  |
+| TC_prereg_DeletePreRegistration_01 | Given an existing pre-registration application, when the applicant deletes it via a valid `preRegistrationId` | Then the response is HTTP 200, a `deletedBy` field is returned, and the application record is deleted. | positive | integration | ✅ automated | [preReg/DeletePreRegistration/DeletePreRegistration.yml::TC_prereg_DeletePreRegistration_01](../../preReg/DeletePreRegistration/DeletePreRegistration.yml#L4) | Legacy: REG_TC_103, TC-MOSIP-17633-52. |
 | TC_Prereg_DeletePreRegistration_03 | Given a caller with no valid login cookie, when they attempt to delete a pre-registration | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_DeletePreRegistration_04 | Given a caller holding a role outside `INDIVIDUAL, REGISTRATION_OFFICER, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN`, when they attempt to delete a pre-registration | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
 | TC_Prereg_DeletePreRegistration_05 | Given this is a path-param-only DELETE with no request body, a conventional field-validation case doesn't directly apply here | TODO — clarify with the team what a validation scenario should mean for this endpoint, or reclassify as `not_automatable`; no automated case exists yet. | validation | integration | 🟡 not_automated |  |  |
-| TC_prereg_DeletePreRegistration_02 | Given the `preRegistrationId` path value is malformed/invalid, when the delete request is submitted | Then `errors[0].errorCode` = `PRG_PAM_APP_005`. | not_found | integration | ✅ automated | [preReg/DeletePreRegistration/DeletePreRegistration.yml::TC_prereg_DeletePreRegistration_02](../../preReg/DeletePreRegistration/DeletePreRegistration.yml#L18) |  |
+| TC_prereg_DeletePreRegistration_02 | Given the `preRegistrationId` path value is malformed/invalid, when the delete request is submitted | Then `errors[0].errorCode` = `PRG_PAM_APP_005`. | not_found | integration | ✅ automated | [preReg/DeletePreRegistration/DeletePreRegistration.yml::TC_prereg_DeletePreRegistration_02](../../preReg/DeletePreRegistration/DeletePreRegistration.yml#L18) | Legacy: REG_TC_129, REG_TC_130, TC-MOSIP-17633-53. |
 | TC_Prereg_DeletePreRegistration_06 | Given a `preRegistrationId` at a boundary length/format (e.g. the shortest or longest value the ID-generation scheme can produce), when the delete request is submitted | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_DeletePreRegistration_07 | Given a pre-registration that was already deleted, when the same `preRegistrationId` is deleted again | TODO — expect a not-found-style error on the second call, not a silent success; no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |
 | TC_Prereg_DeletePreRegistration_08 | Given two different applicants' pre-registrations, when one applicant's session attempts to delete the other's application via its `preRegistrationId` | TODO — expect the cross-applicant delete to be rejected; no automated case exists yet. | data_isolation | integration | 🟡 not_automated |  |  |

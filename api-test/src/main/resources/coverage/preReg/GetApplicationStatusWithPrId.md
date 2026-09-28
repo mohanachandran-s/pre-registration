@@ -5,8 +5,9 @@
 | Subject code | `PREREG-GETAPPLICATIONSTATUSWITHPRID` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-08-07 |
+| Last updated | 2026-09-25 |
 | Unit type | `endpoint` |
+| Stories | MOSIP-17633 |
 
 **Units**
 
@@ -28,7 +29,7 @@ subject: preReg/GetApplicationStatusWithPrId
 subject_code: PREREG-GETAPPLICATIONSTATUSWITHPRID
 domain: api
 owner: unassigned
-last_updated: "2026-08-07"
+last_updated: "2026-09-25"
 unit_type: endpoint
 units:
   - "GET /preregistration/v1/applications/prereg/status/{preRegistrationId}"
@@ -47,6 +48,8 @@ categories:
   - idempotency
   - data_isolation
   - dependency_state
+stories:
+  - MOSIP-17633
 ```
 
 </details>
@@ -54,11 +57,11 @@ categories:
 <!-- GENERATED:grid -->
 | ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
 |---|---|---|---|---|---|---|---|
-| TC_prereg_GetApplicationStatusWithPrId_01 | Given a `preRegistrationId` created earlier by `createPrereg`, when the caller submits `GET /applications/prereg/status/{preRegistrationId}` | Then the response's `statusCode` = `Application_Incomplete`, matching the record's current state. | positive | integration | ✅ automated | [preReg/GetApplicationStatusWithPrId/GetApplicationStatusWithPrId.yml::TC_prereg_GetApplicationStatusWithPrId_01](../../preReg/GetApplicationStatusWithPrId/GetApplicationStatusWithPrId.yml#L4) |  |
+| TC_prereg_GetApplicationStatusWithPrId_01 | Given a `preRegistrationId` created earlier by `createPrereg`, when the caller submits `GET /applications/prereg/status/{preRegistrationId}` | Then the response's `statusCode` = `Application_Incomplete`, matching the record's current state. | positive | integration | ✅ automated | [preReg/GetApplicationStatusWithPrId/GetApplicationStatusWithPrId.yml::TC_prereg_GetApplicationStatusWithPrId_01](../../preReg/GetApplicationStatusWithPrId/GetApplicationStatusWithPrId.yml#L4) | Legacy: REG_TC_159, TC-MOSIP-17633-56. |
 | TC_Prereg_GetApplicationStatusWithPrId_04 | Given a caller with no valid login cookie, when they request an application's status | TODO — expect HTTP 401/403; no automated case exists yet. | authn | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetApplicationStatusWithPrId_05 | Given a caller holding a role outside `REGISTRATION_OFFICER, INDIVIDUAL, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN, PRE_REGISTRATION_ADMIN`, when they request an application's status | TODO — expect HTTP 403; no automated case exists yet. | authz | integration | 🟡 not_automated |  |  |
-| TC_prereg_GetApplicationStatusWithPrId_03 | Given the `preRegistrationId` path segment is left blank (`""`), when the caller submits the request | Then the response is HTTP 500 with no structured `errors` array — the blank path value isn't caught by any input-validation check, it falls straight through to an unhandled failure. | validation | integration | ✅ automated | [preReg/GetApplicationStatusWithPrId/GetApplicationStatusWithPrId.yml::TC_prereg_GetApplicationStatusWithPrId_03](../../preReg/GetApplicationStatusWithPrId/GetApplicationStatusWithPrId.yml#L36) | ⚠️ Real product-side robustness gap, not an automation quirk: `CommonServiceUtil.getApplicationStatus` only null-checks `preRegId` via `requstParamValidator`, and an empty string isn't `null` — so it isn't rejected the way a genuinely missing field is elsewhere in this module. The test asserts only the raw HTTP 500 (`checkOnlyStatusCodeInResponse: true`) because there's no clean business error code to assert against; this is expected/accepted behavior per the test's own design, not something the test author overlooked. |
-| TC_prereg_GetApplicationStatusWithPrId_02 | Given a `preRegistrationId` value that doesn't correspond to any stored record (`65125923803sass948`), when the caller submits the request | Then `errors[0].errorCode` = `PRG_PAM_APP_005`. | not_found | integration | ✅ automated | [preReg/GetApplicationStatusWithPrId/GetApplicationStatusWithPrId.yml::TC_prereg_GetApplicationStatusWithPrId_02](../../preReg/GetApplicationStatusWithPrId/GetApplicationStatusWithPrId.yml#L18) |  |
+| TC_prereg_GetApplicationStatusWithPrId_03 | Given the `preRegistrationId` path segment is left blank (`""`), when the caller submits the request | Then the response is HTTP 500 with no structured `errors` array — the blank path value isn't caught by any input-validation check, it falls straight through to an unhandled failure. | validation | integration | ✅ automated | [preReg/GetApplicationStatusWithPrId/GetApplicationStatusWithPrId.yml::TC_prereg_GetApplicationStatusWithPrId_03](../../preReg/GetApplicationStatusWithPrId/GetApplicationStatusWithPrId.yml#L36) | ⚠️ Real product-side robustness gap, not an automation quirk: `CommonServiceUtil.getApplicationStatus` only null-checks `preRegId` via `requstParamValidator`, and an empty string isn't `null` — so it isn't rejected the way a genuinely missing field is elsewhere in this module. The test asserts only the raw HTTP 500 (`checkOnlyStatusCodeInResponse: true`) because there's no clean business error code to assert against; this is expected/accepted behavior per the test's own design, not something the test author overlooked. Legacy: REG_TC_158. |
+| TC_prereg_GetApplicationStatusWithPrId_02 | Given a `preRegistrationId` value that doesn't correspond to any stored record (`65125923803sass948`), when the caller submits the request | Then `errors[0].errorCode` = `PRG_PAM_APP_005`. | not_found | integration | ✅ automated | [preReg/GetApplicationStatusWithPrId/GetApplicationStatusWithPrId.yml::TC_prereg_GetApplicationStatusWithPrId_02](../../preReg/GetApplicationStatusWithPrId/GetApplicationStatusWithPrId.yml#L18) | Legacy: REG_TC_160, TC-MOSIP-17633-57. |
 | TC_Prereg_GetApplicationStatusWithPrId_06 | Given a `preRegistrationId` at a boundary length/format, when the caller requests its status | TODO — no automated case exists yet. | boundary | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetApplicationStatusWithPrId_07 | Given the same `preRegistrationId`'s status is fetched twice in a row, when the second read is made | TODO — expect an identical response both times (read-only, so trivially idempotent); no automated case exists yet. | idempotency | integration | 🟡 not_automated |  |  |
 | TC_Prereg_GetApplicationStatusWithPrId_08 | Given two different applicants' applications, when one applicant's session requests the other's application status by `preRegistrationId` | TODO — expect the cross-applicant read to be rejected; no automated case exists yet. | data_isolation | integration | 🟡 not_automated |  |  |

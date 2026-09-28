@@ -1,7 +1,7 @@
 GetAllDocForPrId:
    Prereg_GetAllDocForPrId_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UploadDocument_01
+      uniqueIdentifier: TC_prereg_GetAllDocForPrId_01
       description: Validate that fetching all documents for a Pre Registration ID is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
@@ -15,7 +15,7 @@ GetAllDocForPrId:
 }'
    Prereg_GetAllDocForPrId_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UploadDocument_02
+      uniqueIdentifier: TC_prereg_GetAllDocForPrId_02
       description: Validate that fetching all documents for a Pre Registration ID fails when an invalid pre registration ID is provided
       role: batch
       restMethod: get
