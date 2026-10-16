@@ -15,7 +15,7 @@ The **Pre Registration API Test Rig** is designed for the execution of module-wi
 
 ## Coverage
 
-This test rig covers only **external API endpoints** exposed by the pre registration services module.
+This test rig covers the **external API endpoints** exposed by the pre registration services module. Some test cases also check the database directly (see [PII and database test cases](#pii-and-database-test-cases)).
 
 ---
 
@@ -25,7 +25,6 @@ Before running the automation tests, ensure the following software is installed 
 
 - **Java 21** (or a compatible version)
 - **Maven 3.9.6** (or higher)
-- **Lombok** (Refer to [Lombok Project](https://projectlombok.org/))
 - **setting.xml** ([download here](https://github.com/mosip/mosip-functional-tests/blob/master/settings.xml))
 
 ### For Windows
@@ -66,8 +65,20 @@ You can access the test automation code using either of the following methods:
 1. Navigate to the prereg.properties file located at:
     ```sh
     pre-registration\api-test\src\main\resources\config\prereg.properties
+    ```
 2. Open the file in your preferred editor
 3. Update the client secret values and other required credentials as per your environment
+4. Review the properties below, which control the PII and database test cases
+
+### PII and database test cases
+
+Some test cases do more than call the external APIs: they read the audit log or check PII storage directly in the database, and some inject a database fault to test failure handling.
+
+- **piiBackwardCompatibility**: Set this to the environment's `mosip.prereg.pii.backward.compatibility` value. It decides whether the `PiiCompatOn` or `PiiCompatOff` test cases run, so a wrong value runs the wrong set.
+- **db-server**, **db-port**, **postgres-password**: The database these test cases connect to, and the password of the database user (`postgres` by default).
+- **Fault-injection test cases** need a database user that can create triggers on `prereg.user_details`. Without that permission, these test cases are skipped and not reported as failures.
+- **preregActuatorEndpoint**: The application-service actuator `env` endpoint, which some test cases read to find the environment's settings. Defaults to `/preregistration/v1/actuator/env`.
+- **testCasesToExecute**: Leave blank to run every test case. To run only some, list their `uniqueIdentifier` values, separated by commas (for example `testCasesToExecute=TC_prereg_UploadDocument_26,TC_prereg_DeleteBooking_01`); the test cases they depend on (from `config/testCaseInterDependency.json`) run as well.
 
 ---
 
@@ -147,7 +158,8 @@ To execute the tests using Eclipse IDE, use the following steps:
    - In the **Arguments** tab, add the necessary **VM arguments**:
      - **VM Arguments**:
        ```
-       -Dmodules=prereg -Denv.user=api-internal.<env_name> -Denv.endpoint=<base_env> -Denv.testLevel=smokeAndRegression```
+       -Dmodules=prereg -Denv.user=api-internal.<env_name> -Denv.endpoint=<base_env> -Denv.testLevel=smokeAndRegression
+       ```
 
 ## 5. **Run the Configuration**
 
