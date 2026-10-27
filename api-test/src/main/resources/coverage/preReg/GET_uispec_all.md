@@ -5,7 +5,7 @@
 | Subject code | `PREREG-PLANNED-GETUISPECALL` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-09-28 |
+| Last updated | 2026-10-27 |
 | Unit type | `endpoint` |
 | Planned | yes — no wired YAML targets this endpoint yet |
 
@@ -17,7 +17,7 @@
 
 | Total | ✅ Automated | 🟡 Not automated | ⛔ Not automatable | Coverage |
 |---|---|---|---|---|
-| 8 | 0 | 7 | 1 | 0.0% |
+| 8 | 0 | 8 | 0 | 0.0% |
 
 **Categories:** `positive` `authn` `authz` `validation` `not_found` `boundary` `idempotency` `data_isolation`
 
@@ -29,7 +29,7 @@ subject: preReg/GET_uispec_all
 subject_code: PREREG-PLANNED-GETUISPECALL
 domain: api
 owner: unassigned
-last_updated: "2026-09-28"
+last_updated: "2026-10-27"
 unit_type: endpoint
 planned: true
 units:
@@ -37,8 +37,8 @@ units:
 summary:
   total: 8
   automated: 0
-  not_automated: 7
-  not_automatable: 1
+  not_automated: 8
+  not_automatable: 0
 categories:
   - positive
   - authn
@@ -53,16 +53,16 @@ categories:
 </details>
 
 <!-- GENERATED:grid -->
-| ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
-|---|---|---|---|---|---|---|---|
-| TC_Prereg_PlannedUiSpecAll_01 | Given several UI specifications have been published, when a logged-in user calls `GET /preregistration/v1/uispec/all?pageNumber=0&pageSize=10` | Then the response is HTTP 200 with the first page of published UI specs. | positive | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedUiSpecAll_02 | Given a caller with no valid `Authorization` cookie, when they list published UI specs | Then the request is rejected as unauthenticated (HTTP 401) before reaching the controller (exact error code to confirm on the first automated run). | authn | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedUiSpecAll_03 | Given a caller holding only a role outside `REGISTRATION_OFFICER, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN, INDIVIDUAL`, when they list published UI specs | Then the request is rejected with HTTP 403 (exact error code to confirm on the first automated run). | authz | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedUiSpecAll_04 | Given a non-numeric `pageNumber` or `pageSize`, when the user lists UI specs | Then the request is rejected as a bad request, never a server error (exact error code to confirm on the first automated run). | validation | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedUiSpecAll_05 | Given `pageNumber` past the last page, when the user lists UI specs | Then the response is an empty page, not an error (exact error code to confirm on the first automated run). | not_found | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedUiSpecAll_06 | Given `pageSize=0` and a very large `pageSize`, when the user lists UI specs | Then both are handled cleanly (rejected or capped), never a server error. | boundary | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedUiSpecAll_07 | Given the same page is requested twice with no publish in between, when the second call is made | Then both responses are identical. | idempotency | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedUiSpecAll_08 | Not applicable — see Notes. | Not applicable — see Notes. | data_isolation | integration | ⛔ not_automatable |  | UI specifications are global configuration, not per-user data. |
+| ID | Scenario (given/when) | Steps | Expected result (then) | Type | Tier | Status | Test | Story | Notes |
+|---|---|---|---|---|---|---|---|---|---|
+| TC_Prereg_PlannedUiSpecAll_01 | Given several UI specifications have been published, when a logged-in user calls `GET /preregistration/v1/uispec/all?pageNumber=0&pageSize=10` | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/uispec/all`. <br>3. Check: the response is HTTP 200 with the first page of published UI specs. | Then the response is HTTP 200 with the first page of published UI specs. | positive | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedUiSpecAll_02 | Given a caller with no valid `Authorization` cookie, when they list published UI specs | 1. Don't log in — send the request without an `Authorization` cookie. <br>2. Send `GET /preregistration/v1/uispec/all`. <br>3. Check: the request is rejected as unauthenticated (HTTP 401) before reaching the controller (exact error code to confirm on the first automated run). | Then the request is rejected as unauthenticated (HTTP 401) before reaching the controller (exact error code to confirm on the first automated run). | authn | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedUiSpecAll_03 | Given a caller holding only a role outside `REGISTRATION_OFFICER, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN, INDIVIDUAL`, when they list published UI specs | 1. Log in as a user whose only role is `REGISTRATION_OFFICER, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN, INDIVIDUAL` and send its token as the `Authorization` cookie. <br>2. Send `GET /preregistration/v1/uispec/all`. <br>3. Check: the request is rejected with HTTP 403 (exact error code to confirm on the first automated run). | Then the request is rejected with HTTP 403 (exact error code to confirm on the first automated run). | authz | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedUiSpecAll_04 | Given a non-numeric `pageNumber` or `pageSize`, when the user lists UI specs | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/uispec/all` — set up the request so that: a non-numeric `pageNumber` or `pageSize`. <br>3. Check: the request is rejected as a bad request, never a server error (exact error code to confirm on the first automated run). | Then the request is rejected as a bad request, never a server error (exact error code to confirm on the first automated run). | validation | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedUiSpecAll_05 | Given `pageNumber` past the last page, when the user lists UI specs | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/uispec/all` — set up the request so that: `pageNumber` past the last page. <br>3. Check: the response is an empty page, not an error (exact error code to confirm on the first automated run). | Then the response is an empty page, not an error (exact error code to confirm on the first automated run). | not_found | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedUiSpecAll_06 | Given `pageSize=0` and a very large `pageSize`, when the user lists UI specs | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/uispec/all` — set up the request so that: `pageSize=0` and a very large `pageSize`. <br>3. Check: both are handled cleanly (rejected or capped), never a server error. | Then both are handled cleanly (rejected or capped), never a server error. | boundary | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedUiSpecAll_07 | Given the same page is requested twice with no publish in between, when the second call is made | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/uispec/all`. <br>3. Send exactly the same request a second time. <br>4. Check: both responses are identical. | Then both responses are identical. | idempotency | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedUiSpecAll_08 | Given two different applicants are logged in, when each sends the same `GET /preregistration/v1/uispec/all` request | 1. Log in as applicant A (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns. <br>2. As applicant A, send `GET /preregistration/v1/uispec/all` and save the response body. <br>3. Log in again as applicant B (a different account) and send the same request with B's cookie. <br>4. Check: both responses are HTTP 200 and identical, and neither contains anything about the other user (no names, ids, email or phone). | Then both get the same response (HTTP 200) with no user-specific data — this is shared reference data, and one user's call never shows anything about another. | data_isolation | integration | 🟡 not_automated |  |  | Expected result: checked in the service source (the response is global data with no per-user filter). |
 <!-- /GENERATED:grid -->
 
 **About this endpoint**

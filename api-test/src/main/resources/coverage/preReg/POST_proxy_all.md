@@ -5,10 +5,9 @@
 | Subject code | `PREREG-PLANNED-POSTPROXY` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-09-28 |
+| Last updated | 2026-10-27 |
 | Unit type | `endpoint` |
 | Planned | yes — no wired YAML targets this endpoint yet |
-| Stories | MOSIP-10807 |
 
 **Units**
 
@@ -18,7 +17,7 @@
 
 | Total | ✅ Automated | 🟡 Not automated | ⛔ Not automatable | Coverage |
 |---|---|---|---|---|
-| 8 | 0 | 6 | 2 | 0.0% |
+| 8 | 0 | 8 | 0 | 0.0% |
 
 **Categories:** `positive` `authn` `authz` `validation` `not_found` `boundary` `idempotency` `data_isolation`
 
@@ -30,7 +29,7 @@ subject: preReg/POST_proxy_all
 subject_code: PREREG-PLANNED-POSTPROXY
 domain: api
 owner: unassigned
-last_updated: "2026-09-28"
+last_updated: "2026-10-27"
 unit_type: endpoint
 planned: true
 units:
@@ -38,8 +37,8 @@ units:
 summary:
   total: 8
   automated: 0
-  not_automated: 6
-  not_automatable: 2
+  not_automated: 8
+  not_automatable: 0
 categories:
   - positive
   - authn
@@ -49,23 +48,21 @@ categories:
   - boundary
   - idempotency
   - data_isolation
-stories:
-  - MOSIP-10807
 ```
 
 </details>
 
 <!-- GENERATED:grid -->
-| ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
-|---|---|---|---|---|---|---|---|
-| TC_Prereg_PlannedProxyPost_01 | Given the demographic page needs the applicant type for the entered details, when the UI calls `POST /preregistration/v1/proxy/masterdata/getApplicantType` with those attributes | Then the response is HTTP 200 with the same applicant type code masterdata returns directly. | positive | integration | 🟡 not_automated |  | Legacy: Pre Registration_API_06. |
-| TC_Prereg_PlannedProxyPost_02 | Given a caller with no `Authorization` cookie (the pre-login state), when they call a masterdata resource through `POST /preregistration/v1/proxy/masterdata/...` | Then the masterdata response is returned — the endpoint is used before login. | authn | integration | 🟡 not_automated |  | No `@PreAuthorize` on this mapping; whether an anonymous call is allowed is decided by kernel-auth-adapter's public-URL configuration, which is not in this repo. |
-| TC_Prereg_PlannedProxyPost_03 | Not applicable — see Notes. | Not applicable — see Notes. | authz | integration | ⛔ not_automatable |  | No `@PreAuthorize` on this mapping, so there is no role rule to test. |
-| TC_Prereg_PlannedProxyPost_04 | Given a malformed JSON body on a proxied POST, when the UI sends it | Then masterdata's own validation error is passed back unchanged. | validation | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedProxyPost_05 | Given a POST to a path under `/proxy/masterdata/` that masterdata doesn't serve, when the UI sends it | Then masterdata's not-found response is passed back, not a proxy server error. | not_found | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedProxyPost_06 | Given a proxied POST with an empty body (the body is optional on the proxy mapping), when the UI sends it | Then the call is forwarded and masterdata's answer — success or validation error — comes back, never a proxy server error. | boundary | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedProxyPost_07 | Given the same `getApplicantType` POST is sent twice, when the second call is made | Then both responses are identical (it is a lookup, not a write). | idempotency | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedProxyPost_08 | Not applicable — see Notes. | Not applicable — see Notes. | data_isolation | integration | ⛔ not_automatable |  | Masterdata is global reference data, not per-user, so there is nothing to isolate. |
+| ID | Scenario (given/when) | Steps | Expected result (then) | Type | Tier | Status | Test | Story | Notes |
+|---|---|---|---|---|---|---|---|---|---|
+| TC_Prereg_PlannedProxyPost_01 | Given the demographic page needs the applicant type for the entered details, when the UI calls `POST /preregistration/v1/proxy/masterdata/getApplicantType` with those attributes | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `POST /preregistration/v1/proxy/masterdata/getApplicantType` with a valid request body (standard `id`/`version`/`requesttime`/`request` envelope). <br>3. Check: the response is HTTP 200 with the same applicant type code masterdata returns directly. | Then the response is HTTP 200 with the same applicant type code masterdata returns directly. | positive | integration | 🟡 not_automated |  | MOSIP-10807 | Legacy: Pre Registration_API_06. |
+| TC_Prereg_PlannedProxyPost_02 | Given a caller with no `Authorization` cookie (the pre-login state), when they call a masterdata resource through `POST /preregistration/v1/proxy/masterdata/...` | 1. Don't log in — send the request without an `Authorization` cookie. <br>2. Send `POST /preregistration/v1/proxy/masterdata/...` with a valid request body (standard `id`/`version`/`requesttime`/`request` envelope). <br>3. Check: the masterdata response is returned — the endpoint is used before login. | Then the masterdata response is returned — the endpoint is used before login. | authn | integration | 🟡 not_automated |  |  | No role rule in the code; whether a call without a login is allowed is set in the gateway's public-URL configuration (outside this repo). |
+| TC_Prereg_PlannedProxyPost_03 | Given a logged-in user whose only role is `PARTNER_ADMIN` (a role unrelated to pre-registration), when they call `POST /preregistration/v1/proxy/masterdata/getApplicantType` | 1. Log in (Keycloak) as a user whose only role is `PARTNER_ADMIN` and keep its token. <br>2. Send `POST /preregistration/v1/proxy/masterdata/getApplicantType` with a valid request body with that token as the `Authorization` cookie, and save the response. <br>3. Send the same request again without any cookie. <br>4. Check: both calls succeed (HTTP 200, no `errors`) with the same response. | Then masterdata's applicant type is returned exactly as for a caller with no login (HTTP 200, no `errors`) — there is no role rule, so the caller's role neither blocks nor changes the result. | authz | integration | 🟡 not_automated |  |  | Expected result: checked in the service source (no `@PreAuthorize` on this mapping). |
+| TC_Prereg_PlannedProxyPost_04 | Given a malformed JSON body on a proxied POST, when the UI sends it | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `POST /preregistration/v1/proxy/**` — set up the request so that: a malformed JSON body on a proxied POST. <br>3. Check: masterdata's own validation error is passed back unchanged. | Then masterdata's own validation error is passed back unchanged. | validation | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedProxyPost_05 | Given a POST to a path under `/proxy/masterdata/` that masterdata doesn't serve, when the UI sends it | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `POST /preregistration/v1/proxy/**` — set up the request so that: a POST to a path under `/proxy/masterdata/` that masterdata doesn't serve. <br>3. Check: masterdata's not-found response is passed back, not a proxy server error. | Then masterdata's not-found response is passed back, not a proxy server error. | not_found | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedProxyPost_06 | Given a proxied POST with an empty body (the body is optional on the proxy mapping), when the UI sends it | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `POST /preregistration/v1/proxy/**` — set up the request so that: a proxied POST with an empty body (the body is optional on the proxy mapping). <br>3. Check: the call is forwarded and masterdata's answer — success or validation error — comes back, never a proxy server error. | Then the call is forwarded and masterdata's answer — success or validation error — comes back, never a proxy server error. | boundary | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedProxyPost_07 | Given the same `getApplicantType` POST is sent twice, when the second call is made | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `POST /preregistration/v1/proxy/**` with a valid request body (standard `id`/`version`/`requesttime`/`request` envelope). <br>3. Send exactly the same request a second time. <br>4. Check: both responses are identical (it is a lookup, not a write). | Then both responses are identical (it is a lookup, not a write). | idempotency | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedProxyPost_08 | Given two different applicants are logged in, when each sends the same `POST /preregistration/v1/proxy/masterdata/getApplicantType` request | 1. Log in as applicant A (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns. <br>2. As applicant A, send `POST /preregistration/v1/proxy/masterdata/getApplicantType` with a valid request body and save the response body. <br>3. Log in again as applicant B (a different account) and send the same request with B's cookie. <br>4. Check: both responses are HTTP 200 and identical, and neither contains anything about the other user (no names, ids, email or phone). | Then both get the same response (HTTP 200) with no user-specific data — this is shared reference data, and one user's call never shows anything about another. | data_isolation | integration | 🟡 not_automated |  |  | Expected result: checked in the service source (the response is global data with no per-user filter). |
 <!-- /GENERATED:grid -->
 
 **About this endpoint**

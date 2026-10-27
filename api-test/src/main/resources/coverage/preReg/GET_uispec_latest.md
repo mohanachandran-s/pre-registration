@@ -5,7 +5,7 @@
 | Subject code | `PREREG-PLANNED-GETUISPECLATEST` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-09-28 |
+| Last updated | 2026-10-27 |
 | Unit type | `endpoint` |
 | Planned | yes — no wired YAML targets this endpoint yet |
 
@@ -17,7 +17,7 @@
 
 | Total | ✅ Automated | 🟡 Not automated | ⛔ Not automatable | Coverage |
 |---|---|---|---|---|
-| 8 | 0 | 7 | 1 | 0.0% |
+| 8 | 0 | 8 | 0 | 0.0% |
 
 **Categories:** `positive` `authn` `authz` `validation` `not_found` `boundary` `idempotency` `data_isolation`
 
@@ -29,7 +29,7 @@ subject: preReg/GET_uispec_latest
 subject_code: PREREG-PLANNED-GETUISPECLATEST
 domain: api
 owner: unassigned
-last_updated: "2026-09-28"
+last_updated: "2026-10-27"
 unit_type: endpoint
 planned: true
 units:
@@ -37,8 +37,8 @@ units:
 summary:
   total: 8
   automated: 0
-  not_automated: 7
-  not_automatable: 1
+  not_automated: 8
+  not_automatable: 0
 categories:
   - positive
   - authn
@@ -53,16 +53,16 @@ categories:
 </details>
 
 <!-- GENERATED:grid -->
-| ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
-|---|---|---|---|---|---|---|---|
-| TC_Prereg_PlannedUiSpecLatest_01 | Given a published UI specification exists, when a logged-in user calls `GET /preregistration/v1/uispec/latest` with no parameters | Then the response is HTTP 200 with the latest published UI spec (`UISpecMetaDataDTO`). | positive | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedUiSpecLatest_02 | Given a caller with no valid `Authorization` cookie, when they fetch the latest UI spec | Then the request is rejected as unauthenticated (HTTP 401) before reaching the controller (exact error code to confirm on the first automated run). | authn | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedUiSpecLatest_03 | Given a caller holding only a role outside `REGISTRATION_OFFICER, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN, INDIVIDUAL`, when they fetch the latest UI spec | Then the request is rejected with HTTP 403 (exact error code to confirm on the first automated run). | authz | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedUiSpecLatest_04 | Given a non-numeric `version` or `identitySchemaVersion` query parameter, when the user fetches the UI spec | Then the request is rejected as a bad request, never a server error (exact error code to confirm on the first automated run). | validation | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedUiSpecLatest_05 | Given a `version` for which no UI spec was ever published, when the user fetches it | Then the service reports that no spec was found (exact error code to confirm on the first automated run). | not_found | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedUiSpecLatest_06 | Given `version=0` and `identitySchemaVersion=0` (the defaults) are passed explicitly, when the user fetches the UI spec | Then the result is the same as calling with no parameters — the latest published spec. | boundary | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedUiSpecLatest_07 | Given the latest UI spec is fetched twice with no publish in between, when the second call is made | Then both responses are identical. | idempotency | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedUiSpecLatest_08 | Not applicable — see Notes. | Not applicable — see Notes. | data_isolation | integration | ⛔ not_automatable |  | UI specifications are global configuration, not per-user data. |
+| ID | Scenario (given/when) | Steps | Expected result (then) | Type | Tier | Status | Test | Story | Notes |
+|---|---|---|---|---|---|---|---|---|---|
+| TC_Prereg_PlannedUiSpecLatest_01 | Given a published UI specification exists, when a logged-in user calls `GET /preregistration/v1/uispec/latest` with no parameters | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/uispec/latest`. <br>3. Check: the response is HTTP 200 with the latest published UI spec (`UISpecMetaDataDTO`). | Then the response is HTTP 200 with the latest published UI spec (`UISpecMetaDataDTO`). | positive | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedUiSpecLatest_02 | Given a caller with no valid `Authorization` cookie, when they fetch the latest UI spec | 1. Don't log in — send the request without an `Authorization` cookie. <br>2. Send `GET /preregistration/v1/uispec/latest`. <br>3. Check: the request is rejected as unauthenticated (HTTP 401) before reaching the controller (exact error code to confirm on the first automated run). | Then the request is rejected as unauthenticated (HTTP 401) before reaching the controller (exact error code to confirm on the first automated run). | authn | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedUiSpecLatest_03 | Given a caller holding only a role outside `REGISTRATION_OFFICER, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN, INDIVIDUAL`, when they fetch the latest UI spec | 1. Log in as a user whose only role is `REGISTRATION_OFFICER, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN, INDIVIDUAL` and send its token as the `Authorization` cookie. <br>2. Send `GET /preregistration/v1/uispec/latest`. <br>3. Check: the request is rejected with HTTP 403 (exact error code to confirm on the first automated run). | Then the request is rejected with HTTP 403 (exact error code to confirm on the first automated run). | authz | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedUiSpecLatest_04 | Given a non-numeric `version` or `identitySchemaVersion` query parameter, when the user fetches the UI spec | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/uispec/latest` — set up the request so that: a non-numeric `version` or `identitySchemaVersion` query parameter. <br>3. Check: the request is rejected as a bad request, never a server error (exact error code to confirm on the first automated run). | Then the request is rejected as a bad request, never a server error (exact error code to confirm on the first automated run). | validation | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedUiSpecLatest_05 | Given a `version` for which no UI spec was ever published, when the user fetches it | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/uispec/latest` — set up the request so that: a `version` for which no UI spec was ever published. <br>3. Check: the service reports that no spec was found (exact error code to confirm on the first automated run). | Then the service reports that no spec was found (exact error code to confirm on the first automated run). | not_found | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedUiSpecLatest_06 | Given `version=0` and `identitySchemaVersion=0` (the defaults) are passed explicitly, when the user fetches the UI spec | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/uispec/latest` — set up the request so that: `version=0` and `identitySchemaVersion=0` (the defaults) are passed explicitly. <br>3. Check: the result is the same as calling with no parameters — the latest published spec. | Then the result is the same as calling with no parameters — the latest published spec. | boundary | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedUiSpecLatest_07 | Given the latest UI spec is fetched twice with no publish in between, when the second call is made | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/uispec/latest`. <br>3. Send exactly the same request a second time. <br>4. Check: both responses are identical. | Then both responses are identical. | idempotency | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedUiSpecLatest_08 | Given two different applicants are logged in, when each sends the same `GET /preregistration/v1/uispec/latest` request | 1. Log in as applicant A (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns. <br>2. As applicant A, send `GET /preregistration/v1/uispec/latest` and save the response body. <br>3. Log in again as applicant B (a different account) and send the same request with B's cookie. <br>4. Check: both responses are HTTP 200 and identical, and neither contains anything about the other user (no names, ids, email or phone). | Then both get the same response (HTTP 200) with no user-specific data — this is shared reference data, and one user's call never shows anything about another. | data_isolation | integration | 🟡 not_automated |  |  | Expected result: checked in the service source (the response is global data with no per-user filter). |
 <!-- /GENERATED:grid -->
 
 **About this endpoint**

@@ -5,7 +5,7 @@
 | Subject code | `PREREG-PLANNED-POSTVALIDATECAPTCHA` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-09-28 |
+| Last updated | 2026-10-27 |
 | Unit type | `endpoint` |
 | Planned | yes — no wired YAML targets this endpoint yet |
 
@@ -17,7 +17,7 @@
 
 | Total | ✅ Automated | 🟡 Not automated | ⛔ Not automatable | Coverage |
 |---|---|---|---|---|
-| 8 | 0 | 5 | 3 | 0.0% |
+| 8 | 0 | 6 | 2 | 0.0% |
 
 **Categories:** `positive` `authn` `authz` `validation` `not_found` `boundary` `idempotency` `data_isolation`
 
@@ -29,7 +29,7 @@ subject: preReg/POST_validatecaptcha
 subject_code: PREREG-PLANNED-POSTVALIDATECAPTCHA
 domain: api
 owner: unassigned
-last_updated: "2026-09-28"
+last_updated: "2026-10-27"
 unit_type: endpoint
 planned: true
 units:
@@ -37,8 +37,8 @@ units:
 summary:
   total: 8
   automated: 0
-  not_automated: 5
-  not_automatable: 3
+  not_automated: 6
+  not_automatable: 2
 categories:
   - positive
   - authn
@@ -53,16 +53,16 @@ categories:
 </details>
 
 <!-- GENERATED:grid -->
-| ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
-|---|---|---|---|---|---|---|---|
-| TC_Prereg_PlannedValidateCaptcha_01 | Given a fresh, valid captcha token from the login page, when it is submitted to `POST /preregistration/v1/validatecaptcha` | Then the response confirms the captcha is valid. | positive | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedValidateCaptcha_02 | Given a caller with no `Authorization` cookie (the pre-login state), when they validate a captcha token | Then the token is validated — the endpoint is used before login. | authn | integration | 🟡 not_automated |  | No `@PreAuthorize` on this mapping; whether an anonymous call is allowed is decided by kernel-auth-adapter's public-URL configuration, which is not in this repo. |
-| TC_Prereg_PlannedValidateCaptcha_03 | Not applicable — see Notes. | Not applicable — see Notes. | authz | integration | ⛔ not_automatable |  | No `@PreAuthorize` on this mapping, so there is no role rule to test. |
-| TC_Prereg_PlannedValidateCaptcha_04 | Given an invalid token, and separately a request with the token missing, when each is submitted | Then both are rejected: the invalid token as a failed captcha, the missing one as a request validation error (exact error code to confirm on the first automated run). | validation | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedValidateCaptcha_05 | Not applicable — see Notes. | Not applicable — see Notes. | not_found | integration | ⛔ not_automatable |  | Nothing is looked up by id; the token is checked with the captcha provider. |
-| TC_Prereg_PlannedValidateCaptcha_06 | Given an empty-string token and a very long token, when each is submitted | Then both are rejected cleanly, never a server error. | boundary | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedValidateCaptcha_07 | Given a token that was already validated once, when it is submitted again | Then the second validation fails — captcha tokens are single-use with the provider (exact error code to confirm on the first automated run). | idempotency | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedValidateCaptcha_08 | Not applicable — see Notes. | Not applicable — see Notes. | data_isolation | integration | ⛔ not_automatable |  | Pre-login endpoint with no user session, so there is nothing to isolate between users. |
+| ID | Scenario (given/when) | Steps | Expected result (then) | Type | Tier | Status | Test | Story | Notes |
+|---|---|---|---|---|---|---|---|---|---|
+| TC_Prereg_PlannedValidateCaptcha_01 | Given a fresh, valid captcha token from the login page, when it is submitted to `POST /preregistration/v1/validatecaptcha` | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `POST /preregistration/v1/validatecaptcha` with a valid request body (standard `id`/`version`/`requesttime`/`request` envelope). <br>3. Check: the response confirms the captcha is valid. | Then the response confirms the captcha is valid. | positive | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedValidateCaptcha_02 | Given a caller with no `Authorization` cookie (the pre-login state), when they validate a captcha token | 1. Don't log in — send the request without an `Authorization` cookie. <br>2. Send `POST /preregistration/v1/validatecaptcha` with a valid request body (standard `id`/`version`/`requesttime`/`request` envelope). <br>3. Check: the token is validated — the endpoint is used before login. | Then the token is validated — the endpoint is used before login. | authn | integration | 🟡 not_automated |  |  | No role rule in the code; whether a call without a login is allowed is set in the gateway's public-URL configuration (outside this repo). |
+| TC_Prereg_PlannedValidateCaptcha_03 | Given a logged-in user whose only role is `PARTNER_ADMIN` (a role unrelated to pre-registration), when they call `POST /preregistration/v1/validatecaptcha` | 1. Log in (Keycloak) as a user whose only role is `PARTNER_ADMIN` and keep its token. <br>2. Send `POST /preregistration/v1/validatecaptcha` with a valid request body with that token as the `Authorization` cookie, and save the response. <br>3. Send the same request again without any cookie. <br>4. Check: both calls succeed (HTTP 200, no `errors`) with the same response. | Then the captcha check result is returned exactly as for a caller with no login (HTTP 200, no `errors`) — there is no role rule, so the caller's role neither blocks nor changes the result. | authz | integration | 🟡 not_automated |  |  | Expected result: checked in the service source (no `@PreAuthorize` on this mapping). |
+| TC_Prereg_PlannedValidateCaptcha_04 | Given an invalid token, and separately a request with the token missing, when each is submitted | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `POST /preregistration/v1/validatecaptcha` — set up the request so that: an invalid token, and separately a request with the token missing. <br>3. Check: both are rejected: the invalid token as a failed captcha, the missing one as a request validation error (exact error code to confirm on the first automated run). | Then both are rejected: the invalid token as a failed captcha, the missing one as a request validation error (exact error code to confirm on the first automated run). | validation | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedValidateCaptcha_05 | Missing resource — not applicable: nothing is looked up by id — the token is checked with the captcha provider, and an unknown token is simply invalid (this file's validation rows). | 1. Don't log in — send the request without an `Authorization` cookie. <br>2. Send `POST /preregistration/v1/validatecaptcha` with a made-up token. <br>3. Check the request: the token is not an id of a stored record. | No not-found outcome exists: a made-up token is reported as invalid, which the validation rows cover. | not_found | integration | ⛔ not_automatable |  |  | Not applicable: Nothing is looked up by id — the token is checked with the captcha provider, and an unknown token is simply invalid (this file's validation rows). |
+| TC_Prereg_PlannedValidateCaptcha_06 | Given an empty-string token and a very long token, when each is submitted | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `POST /preregistration/v1/validatecaptcha` — set up the request so that: an empty-string token and a very long token. <br>3. Check: both are rejected cleanly, never a server error. | Then both are rejected cleanly, never a server error. | boundary | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedValidateCaptcha_07 | Given a token that was already validated once, when it is submitted again | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `POST /preregistration/v1/validatecaptcha` with a valid request body (standard `id`/`version`/`requesttime`/`request` envelope). <br>3. Send exactly the same request a second time. <br>4. Check: the second validation fails — captcha tokens are single-use with the provider (exact error code to confirm on the first automated run). | Then the second validation fails — captcha tokens are single-use with the provider (exact error code to confirm on the first automated run). | idempotency | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedValidateCaptcha_08 | Per-user isolation — not applicable: this is a pre-login endpoint with no user session, so there is no user whose data could leak to another. | 1. Don't log in — send the request without an `Authorization` cookie. <br>2. Send `POST /preregistration/v1/validatecaptcha` with a captcha token. <br>3. Check: the response only says whether the token is valid; it contains no user data. | No isolation outcome exists. | data_isolation | integration | ⛔ not_automatable |  |  | Not applicable: This is a pre-login endpoint with no user session, so there is no user whose data could leak to another. |
 <!-- /GENERATED:grid -->
 
 **About this endpoint**

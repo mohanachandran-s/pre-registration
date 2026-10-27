@@ -5,10 +5,9 @@
 | Subject code | `PREREG-PLANNED-GETPROXY` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-09-28 |
+| Last updated | 2026-10-27 |
 | Unit type | `endpoint` |
 | Planned | yes — no wired YAML targets this endpoint yet |
-| Stories | MOSIP-10807 |
 
 **Units**
 
@@ -18,7 +17,7 @@
 
 | Total | ✅ Automated | 🟡 Not automated | ⛔ Not automatable | Coverage |
 |---|---|---|---|---|
-| 13 | 0 | 11 | 2 | 0.0% |
+| 13 | 0 | 13 | 0 | 0.0% |
 
 **Categories:** `positive` `authn` `authz` `validation` `not_found` `boundary` `idempotency` `data_isolation`
 
@@ -30,7 +29,7 @@ subject: preReg/GET_proxy_all
 subject_code: PREREG-PLANNED-GETPROXY
 domain: api
 owner: unassigned
-last_updated: "2026-09-28"
+last_updated: "2026-10-27"
 unit_type: endpoint
 planned: true
 units:
@@ -38,8 +37,8 @@ units:
 summary:
   total: 13
   automated: 0
-  not_automated: 11
-  not_automatable: 2
+  not_automated: 13
+  not_automatable: 0
 categories:
   - positive
   - authn
@@ -49,28 +48,26 @@ categories:
   - boundary
   - idempotency
   - data_isolation
-stories:
-  - MOSIP-10807
 ```
 
 </details>
 
 <!-- GENERATED:grid -->
-| ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
-|---|---|---|---|---|---|---|---|
-| TC_Prereg_PlannedProxyGet_01 | Given the demographic page needs gender / dynamic-field reference data, when the UI calls `GET /preregistration/v1/proxy/masterdata/dynamicfields?langCode=eng` (and the gender types resource) | Then the response is HTTP 200 with the same data the masterdata service returns directly — the UI never calls masterdata itself. | positive | integration | 🟡 not_automated |  | Legacy: Pre Registration_API_01, Pre Registration_API_04. |
-| TC_Prereg_PlannedProxyGet_02 | Given the demographic and preview pages need individual types, when the UI calls `GET /preregistration/v1/proxy/masterdata/individualtypes` | Then the response is HTTP 200 with masterdata's individual types. | positive | integration | 🟡 not_automated |  | Legacy: Pre Registration_API_02. |
-| TC_Prereg_PlannedProxyGet_03 | Given the demographic page needs child locations of a location, when the UI calls `GET /preregistration/v1/proxy/masterdata/locations/immediatechildren/100/eng` | Then the response is HTTP 200 with masterdata's immediate child locations. | positive | integration | 🟡 not_automated |  | Legacy: Pre Registration_API_05. |
-| TC_Prereg_PlannedProxyGet_04 | Given the booking pages need registration centres by name, when the UI calls `GET /preregistration/v1/proxy/masterdata/registrationcenters/eng/3/names?name=...` | Then the response is HTTP 200 with the matching centres. | positive | integration | 🟡 not_automated |  | Legacy: Pre Registration_API_07. |
-| TC_Prereg_PlannedProxyGet_05 | Given the booking page needs a centre's working days, when the UI calls `GET /preregistration/v1/proxy/masterdata/workingdays/10020/eng` | Then the response is HTTP 200 with masterdata's working days for that centre. | positive | integration | 🟡 not_automated |  | Legacy: Pre Registration_API_08. |
-| TC_Prereg_PlannedProxyGet_06 | Given the acknowledgement page needs its template, when the UI calls `GET /preregistration/v1/proxy/masterdata/templates/eng/Onscreen-Acknowledgement` | Then the response is HTTP 200 with the template. | positive | integration | 🟡 not_automated |  | Legacy: Pre Registration_API_09. |
-| TC_Prereg_PlannedProxyGet_07 | Given a caller with no `Authorization` cookie (the pre-login state), when they call a masterdata resource through `GET /preregistration/v1/proxy/masterdata/...` | Then the masterdata response is returned — the endpoint is used before login. | authn | integration | 🟡 not_automated |  | No `@PreAuthorize` on this mapping; whether an anonymous call is allowed is decided by kernel-auth-adapter's public-URL configuration, which is not in this repo. |
-| TC_Prereg_PlannedProxyGet_08 | Not applicable — see Notes. | Not applicable — see Notes. | authz | integration | ⛔ not_automatable |  | No `@PreAuthorize` on this mapping, so there is no role rule to test. |
-| TC_Prereg_PlannedProxyGet_09 | Given a proxied masterdata call with invalid parameters (e.g. an unsupported `langCode`), when the UI makes it | Then masterdata's own validation error is passed back to the caller unchanged, not replaced by a proxy error. | validation | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedProxyGet_10 | Given a path under `/proxy/masterdata/` that masterdata doesn't serve, when the UI calls it | Then masterdata's not-found response is passed back (HTTP 404 or its error body), not a proxy server error. | not_found | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedProxyGet_11 | Given a proxied query string with encoded special characters (e.g. `name=Batangas%20City%20(Capital)`), when the UI calls it | Then the query reaches masterdata exactly as sent and the matching centres come back. | boundary | integration | 🟡 not_automated |  | Taken from the legacy manual case Pre Registration_API_07. |
-| TC_Prereg_PlannedProxyGet_12 | Given the same proxied GET is made twice, when the second call is made | Then both responses are identical (read-only reference data). | idempotency | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedProxyGet_13 | Not applicable — see Notes. | Not applicable — see Notes. | data_isolation | integration | ⛔ not_automatable |  | Masterdata is global reference data, not per-user, so there is nothing to isolate. |
+| ID | Scenario (given/when) | Steps | Expected result (then) | Type | Tier | Status | Test | Story | Notes |
+|---|---|---|---|---|---|---|---|---|---|
+| TC_Prereg_PlannedProxyGet_01 | Given the demographic page needs gender / dynamic-field reference data, when the UI calls `GET /preregistration/v1/proxy/masterdata/dynamicfields?langCode=eng` (and the gender types resource) | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `GET /preregistration/v1/proxy/masterdata/dynamicfields?langCode=eng`. <br>3. Check: the response is HTTP 200 with the same data the masterdata service returns directly — the UI never calls masterdata itself. | Then the response is HTTP 200 with the same data the masterdata service returns directly — the UI never calls masterdata itself. | positive | integration | 🟡 not_automated |  | MOSIP-10807 | Legacy: Pre Registration_API_01, Pre Registration_API_04. |
+| TC_Prereg_PlannedProxyGet_02 | Given the demographic and preview pages need individual types, when the UI calls `GET /preregistration/v1/proxy/masterdata/individualtypes` | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `GET /preregistration/v1/proxy/masterdata/individualtypes`. <br>3. Check: the response is HTTP 200 with masterdata's individual types. | Then the response is HTTP 200 with masterdata's individual types. | positive | integration | 🟡 not_automated |  | MOSIP-10807 | Legacy: Pre Registration_API_02. |
+| TC_Prereg_PlannedProxyGet_03 | Given the demographic page needs child locations of a location, when the UI calls `GET /preregistration/v1/proxy/masterdata/locations/immediatechildren/100/eng` | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `GET /preregistration/v1/proxy/masterdata/locations/immediatechildren/100/eng`. <br>3. Check: the response is HTTP 200 with masterdata's immediate child locations. | Then the response is HTTP 200 with masterdata's immediate child locations. | positive | integration | 🟡 not_automated |  | MOSIP-10807 | Legacy: Pre Registration_API_05. |
+| TC_Prereg_PlannedProxyGet_04 | Given the booking pages need registration centres by name, when the UI calls `GET /preregistration/v1/proxy/masterdata/registrationcenters/eng/3/names?name=...` | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `GET /preregistration/v1/proxy/masterdata/registrationcenters/eng/3/names?name=...`. <br>3. Check: the response is HTTP 200 with the matching centres. | Then the response is HTTP 200 with the matching centres. | positive | integration | 🟡 not_automated |  | MOSIP-10807 | Legacy: Pre Registration_API_07. |
+| TC_Prereg_PlannedProxyGet_05 | Given the booking page needs a centre's working days, when the UI calls `GET /preregistration/v1/proxy/masterdata/workingdays/10020/eng` | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `GET /preregistration/v1/proxy/masterdata/workingdays/10020/eng`. <br>3. Check: the response is HTTP 200 with masterdata's working days for that centre. | Then the response is HTTP 200 with masterdata's working days for that centre. | positive | integration | 🟡 not_automated |  | MOSIP-10807 | Legacy: Pre Registration_API_08. |
+| TC_Prereg_PlannedProxyGet_06 | Given the acknowledgement page needs its template, when the UI calls `GET /preregistration/v1/proxy/masterdata/templates/eng/Onscreen-Acknowledgement` | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `GET /preregistration/v1/proxy/masterdata/templates/eng/Onscreen-Acknowledgement`. <br>3. Check: the response is HTTP 200 with the template. | Then the response is HTTP 200 with the template. | positive | integration | 🟡 not_automated |  | MOSIP-10807 | Legacy: Pre Registration_API_09. |
+| TC_Prereg_PlannedProxyGet_07 | Given a caller with no `Authorization` cookie (the pre-login state), when they call a masterdata resource through `GET /preregistration/v1/proxy/masterdata/...` | 1. Don't log in — send the request without an `Authorization` cookie. <br>2. Send `GET /preregistration/v1/proxy/masterdata/...`. <br>3. Check: the masterdata response is returned — the endpoint is used before login. | Then the masterdata response is returned — the endpoint is used before login. | authn | integration | 🟡 not_automated |  |  | No role rule in the code; whether a call without a login is allowed is set in the gateway's public-URL configuration (outside this repo). |
+| TC_Prereg_PlannedProxyGet_08 | Given a logged-in user whose only role is `PARTNER_ADMIN` (a role unrelated to pre-registration), when they call `GET /preregistration/v1/proxy/masterdata/individualtypes` | 1. Log in (Keycloak) as a user whose only role is `PARTNER_ADMIN` and keep its token. <br>2. Send `GET /preregistration/v1/proxy/masterdata/individualtypes` with that token as the `Authorization` cookie, and save the response. <br>3. Send the same request again without any cookie. <br>4. Check: both calls succeed (HTTP 200, no `errors`) with the same response. | Then masterdata's individual types are returned exactly as for a caller with no login (HTTP 200, no `errors`) — there is no role rule, so the caller's role neither blocks nor changes the result. | authz | integration | 🟡 not_automated |  |  | Expected result: checked in the service source (no `@PreAuthorize` on this mapping). |
+| TC_Prereg_PlannedProxyGet_09 | Given a proxied masterdata call with invalid parameters (e.g. an unsupported `langCode`), when the UI makes it | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `GET /preregistration/v1/proxy/**` — set up the request so that: a proxied masterdata call with invalid parameters (e.g. an unsupported `langCode`). <br>3. Check: masterdata's own validation error is passed back to the caller unchanged, not replaced by a proxy error. | Then masterdata's own validation error is passed back to the caller unchanged, not replaced by a proxy error. | validation | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedProxyGet_10 | Given a path under `/proxy/masterdata/` that masterdata doesn't serve, when the UI calls it | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `GET /preregistration/v1/proxy/**` — set up the request so that: a path under `/proxy/masterdata/` that masterdata doesn't serve. <br>3. Check: masterdata's not-found response is passed back (HTTP 404 or its error body), not a proxy server error. | Then masterdata's not-found response is passed back (HTTP 404 or its error body), not a proxy server error. | not_found | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedProxyGet_11 | Given a proxied query string with encoded special characters (e.g. `name=Batangas%20City%20(Capital)`), when the UI calls it | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `GET /preregistration/v1/proxy/**` — set up the request so that: a proxied query string with encoded special characters (e.g. `name=Batangas%20City%20(Capital)`). <br>3. Check: the query reaches masterdata exactly as sent and the matching centres come back. | Then the query reaches masterdata exactly as sent and the matching centres come back. | boundary | integration | 🟡 not_automated |  |  | Taken from the legacy manual case Pre Registration_API_07. |
+| TC_Prereg_PlannedProxyGet_12 | Given the same proxied GET is made twice, when the second call is made | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `GET /preregistration/v1/proxy/**`. <br>3. Send exactly the same request a second time. <br>4. Check: both responses are identical (read-only reference data). | Then both responses are identical (read-only reference data). | idempotency | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedProxyGet_13 | Given two different applicants are logged in, when each sends the same `GET /preregistration/v1/proxy/masterdata/individualtypes` request | 1. Log in as applicant A (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns. <br>2. As applicant A, send `GET /preregistration/v1/proxy/masterdata/individualtypes` and save the response body. <br>3. Log in again as applicant B (a different account) and send the same request with B's cookie. <br>4. Check: both responses are HTTP 200 and identical, and neither contains anything about the other user (no names, ids, email or phone). | Then both get the same response (HTTP 200) with no user-specific data — this is shared reference data, and one user's call never shows anything about another. | data_isolation | integration | 🟡 not_automated |  |  | Expected result: checked in the service source (the response is global data with no per-user filter). |
 <!-- /GENERATED:grid -->
 
 **About this endpoint**

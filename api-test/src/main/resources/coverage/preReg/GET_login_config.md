@@ -5,7 +5,7 @@
 | Subject code | `PREREG-PLANNED-GETLOGINCONFIG` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-09-28 |
+| Last updated | 2026-10-27 |
 | Unit type | `endpoint` |
 | Planned | yes — no wired YAML targets this endpoint yet |
 
@@ -17,7 +17,7 @@
 
 | Total | ✅ Automated | 🟡 Not automated | ⛔ Not automatable | Coverage |
 |---|---|---|---|---|
-| 8 | 0 | 4 | 4 | 0.0% |
+| 8 | 0 | 6 | 2 | 0.0% |
 
 **Categories:** `positive` `authn` `authz` `validation` `not_found` `boundary` `idempotency` `data_isolation`
 
@@ -29,7 +29,7 @@ subject: preReg/GET_login_config
 subject_code: PREREG-PLANNED-GETLOGINCONFIG
 domain: api
 owner: unassigned
-last_updated: "2026-09-28"
+last_updated: "2026-10-27"
 unit_type: endpoint
 planned: true
 units:
@@ -37,8 +37,8 @@ units:
 summary:
   total: 8
   automated: 0
-  not_automated: 4
-  not_automatable: 4
+  not_automated: 6
+  not_automatable: 2
 categories:
   - positive
   - authn
@@ -53,16 +53,16 @@ categories:
 </details>
 
 <!-- GENERATED:grid -->
-| ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
-|---|---|---|---|---|---|---|---|
-| TC_Prereg_PlannedLoginConfig_01 | Given the pre-registration UI is starting up, when it calls `GET /preregistration/v1/login/config` | Then the response is HTTP 200 with a map of the global and pre-registration configuration the UI needs (languages, validation settings, ...). | positive | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedLoginConfig_02 | Given a caller with no `Authorization` cookie (the pre-login state), when they call `GET /preregistration/v1/login/config` | Then the configuration is returned (HTTP 200) — the endpoint is used before login. | authn | integration | 🟡 not_automated |  | No `@PreAuthorize` on this mapping; whether an anonymous call is allowed is decided by kernel-auth-adapter's public-URL configuration, which is not in this repo. |
-| TC_Prereg_PlannedLoginConfig_03 | Not applicable — see Notes. | Not applicable — see Notes. | authz | integration | ⛔ not_automatable |  | No `@PreAuthorize` on this mapping, so there is no role rule to test. |
-| TC_Prereg_PlannedLoginConfig_04 | Not applicable — see Notes. | Not applicable — see Notes. | validation | integration | ⛔ not_automatable |  | No request body and no parameters to validate. |
-| TC_Prereg_PlannedLoginConfig_05 | Not applicable — see Notes. | Not applicable — see Notes. | not_found | integration | ⛔ not_automatable |  | No resource identifier: it always returns the current configuration. |
-| TC_Prereg_PlannedLoginConfig_06 | Not applicable — see Notes. | Not applicable — see Notes. | boundary | integration | ⛔ not_automatable |  | No inputs, so there is no boundary to test. |
-| TC_Prereg_PlannedLoginConfig_07 | Given the configuration is requested twice with no config change in between, when the second call is made | Then both responses are identical. | idempotency | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedLoginConfig_08 | Given the configuration is requested (by anyone), when the response is inspected | Then it contains only UI-safe keys — no secrets, credentials or per-user data are exposed. | data_isolation | integration | 🟡 not_automated |  |  |
+| ID | Scenario (given/when) | Steps | Expected result (then) | Type | Tier | Status | Test | Story | Notes |
+|---|---|---|---|---|---|---|---|---|---|
+| TC_Prereg_PlannedLoginConfig_01 | Given the pre-registration UI is starting up, when it calls `GET /preregistration/v1/login/config` | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `GET /preregistration/v1/login/config`. <br>3. Check: the response is HTTP 200 with a map of the global and pre-registration configuration the UI needs (languages, validation settings, ...). | Then the response is HTTP 200 with a map of the global and pre-registration configuration the UI needs (languages, validation settings, ...). | positive | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedLoginConfig_02 | Given a caller with no `Authorization` cookie (the pre-login state), when they call `GET /preregistration/v1/login/config` | 1. Don't log in — send the request without an `Authorization` cookie. <br>2. Send `GET /preregistration/v1/login/config`. <br>3. Check: the configuration is returned (HTTP 200) — the endpoint is used before login. | Then the configuration is returned (HTTP 200) — the endpoint is used before login. | authn | integration | 🟡 not_automated |  |  | No role rule in the code; whether a call without a login is allowed is set in the gateway's public-URL configuration (outside this repo). |
+| TC_Prereg_PlannedLoginConfig_03 | Given a logged-in user whose only role is `PARTNER_ADMIN` (a role unrelated to pre-registration), when they call `GET /preregistration/v1/login/config` | 1. Log in (Keycloak) as a user whose only role is `PARTNER_ADMIN` and keep its token. <br>2. Send `GET /preregistration/v1/login/config` with that token as the `Authorization` cookie, and save the response. <br>3. Send the same request again without any cookie. <br>4. Check: both calls succeed (HTTP 200, no `errors`) with the same response. | Then the configuration is returned exactly as for a caller with no login (HTTP 200, no `errors`) — there is no role rule, so the caller's role neither blocks nor changes the result. | authz | integration | 🟡 not_automated |  |  | Expected result: checked in the service source (no `@PreAuthorize` on this mapping). |
+| TC_Prereg_PlannedLoginConfig_04 | Given unexpected query parameters (e.g. `?foo=bar&langCode=xyz`), when the caller sends `GET /preregistration/v1/login/config` | 1. Don't log in — send the request without an `Authorization` cookie. <br>2. Send `GET /preregistration/v1/login/config` and save the response. <br>3. Send `GET /preregistration/v1/login/config?foo=bar&langCode=xyz`. <br>4. Check: the second response is HTTP 200 and identical to the first. | Then the extra parameters are ignored: HTTP 200 with the same configuration as a plain call. | validation | integration | 🟡 not_automated |  |  | Expected result: checked in the service source (`LoginController.configParams` takes no parameters). |
+| TC_Prereg_PlannedLoginConfig_05 | Missing resource — not applicable: the endpoint takes no id — it always returns the current configuration, so nothing can be "not found". | 1. Send `GET /preregistration/v1/login/config` without a cookie. <br>2. Check the request: there is no path or query value that names a record. | No not-found outcome exists: the call always returns the configuration (HTTP 200), which `TC_Prereg_PlannedLoginConfig_01` checks. | not_found | integration | ⛔ not_automatable |  |  | Not applicable: The endpoint takes no id — it always returns the current configuration, so nothing can be "not found". |
+| TC_Prereg_PlannedLoginConfig_06 | Boundary values — not applicable: the endpoint has no inputs (no body, no parameters), so there is no value to push to a limit. | 1. Send `GET /preregistration/v1/login/config` without a cookie. <br>2. Check the request: there is nothing in it whose length or range could be varied. | No boundary outcome exists; `TC_Prereg_PlannedLoginConfig_04` covers unexpected extra parameters. | boundary | integration | ⛔ not_automatable |  |  | Not applicable: The endpoint has no inputs (no body, no parameters), so there is no value to push to a limit. |
+| TC_Prereg_PlannedLoginConfig_07 | Given the configuration is requested twice with no config change in between, when the second call is made | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `GET /preregistration/v1/login/config`. <br>3. Send exactly the same request a second time. <br>4. Check: both responses are identical. | Then both responses are identical. | idempotency | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedLoginConfig_08 | Given the configuration is requested (by anyone), when the response is inspected | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. As applicant A, create the resource the endpoint works on and note its id. <br>3. Log in again as applicant B (a different account) and use B's `Authorization` cookie from now on. <br>4. As applicant B, try to read applicant A's application: `GET /preregistration/v1/applications/{applicationId}` with A's `applicationId`. <br>5. Check: it contains only UI-safe keys — no secrets, credentials or per-user data are exposed. | Then it contains only UI-safe keys — no secrets, credentials or per-user data are exposed. | data_isolation | integration | 🟡 not_automated |  |  |  |
 <!-- /GENERATED:grid -->
 
 **About this endpoint**

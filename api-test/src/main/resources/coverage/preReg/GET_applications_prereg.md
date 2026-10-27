@@ -5,10 +5,9 @@
 | Subject code | `PREREG-PLANNED-GETAPPLICATIONSPREREG` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-09-28 |
+| Last updated | 2026-10-22 |
 | Unit type | `endpoint` |
 | Planned | yes — no wired YAML targets this endpoint yet |
-| Stories | MOSIP-17633 |
 
 **Units**
 
@@ -30,7 +29,7 @@ subject: preReg/GET_applications_prereg
 subject_code: PREREG-PLANNED-GETAPPLICATIONSPREREG
 domain: api
 owner: unassigned
-last_updated: "2026-09-28"
+last_updated: "2026-10-22"
 unit_type: endpoint
 planned: true
 units:
@@ -49,23 +48,21 @@ categories:
   - boundary
   - idempotency
   - data_isolation
-stories:
-  - MOSIP-17633
 ```
 
 </details>
 
 <!-- GENERATED:grid -->
-| ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
-|---|---|---|---|---|---|---|---|
-| TC_Prereg_PlannedGetAllPreRegApplications_01 | Given a logged-in applicant who owns several pre-registration applications, when they submit `GET /preregistration/v1/applications/prereg` | Then the response is HTTP 200 with a `DemographicMetadataDTO` listing each of their applications (basic details and status), paginated. | positive | integration | 🟡 not_automated |  | Legacy: TC-MOSIP-17633-45. |
-| TC_Prereg_PlannedGetAllPreRegApplications_02 | Given a caller with no valid `Authorization` cookie, when they list their pre-registration applications | Then the request is rejected as unauthenticated (HTTP 401) before reaching the controller (exact error code to confirm on the first automated run). | authn | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedGetAllPreRegApplications_03 | Given a caller holding only a role outside `REGISTRATION_OFFICER, INDIVIDUAL, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN`, when they list pre-registration applications | Then the request is rejected with HTTP 403 (exact error code to confirm on the first automated run). | authz | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedGetAllPreRegApplications_04 | Given a non-numeric `pageIndex` query parameter, when the applicant lists their applications | Then the request is rejected with a validation error (exact error code to confirm on the first automated run). | validation | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedGetAllPreRegApplications_05 | Given a logged-in applicant who owns no applications, when they list their applications | Then the service reports that no data was found for the user (`PRG_PAM_APP_005`-style) rather than failing (exact error code to confirm on the first automated run). | not_found | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedGetAllPreRegApplications_06 | Given `pageIndex` pointing one past the last page, when the applicant lists their applications | Then the response is an empty page or a clean not-found error, never a server error. | boundary | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedGetAllPreRegApplications_07 | Given the same list request is made twice in a row, when the second call is made | Then both responses are identical (read-only). | idempotency | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedGetAllPreRegApplications_08 | Given two applicants who each own applications, when one of them lists their applications | Then only that applicant's own applications are returned — never another applicant's. | data_isolation | integration | 🟡 not_automated |  |  |
+| ID | Scenario (given/when) | Steps | Expected result (then) | Type | Tier | Status | Test | Story | Notes |
+|---|---|---|---|---|---|---|---|---|---|
+| TC_Prereg_PlannedGetAllPreRegApplications_01 | Given a logged-in applicant who owns several pre-registration applications, when they submit `GET /preregistration/v1/applications/prereg` | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/applications/prereg`. <br>3. Check: the response is HTTP 200 with a `DemographicMetadataDTO` listing each of their applications (basic details and status), paginated. | Then the response is HTTP 200 with a `DemographicMetadataDTO` listing each of their applications (basic details and status), paginated. | positive | integration | 🟡 not_automated |  | MOSIP-17633 | Legacy: TC-MOSIP-17633-45. |
+| TC_Prereg_PlannedGetAllPreRegApplications_02 | Given a caller with no valid `Authorization` cookie, when they list their pre-registration applications | 1. Don't log in — send the request without an `Authorization` cookie. <br>2. Send `GET /preregistration/v1/applications/prereg`. <br>3. Check: the request is rejected as unauthenticated (HTTP 401) before reaching the controller (exact error code to confirm on the first automated run). | Then the request is rejected as unauthenticated (HTTP 401) before reaching the controller (exact error code to confirm on the first automated run). | authn | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedGetAllPreRegApplications_03 | Given a caller holding only a role outside `REGISTRATION_OFFICER, INDIVIDUAL, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN`, when they list pre-registration applications | 1. Log in as a user whose only role is `REGISTRATION_OFFICER, INDIVIDUAL, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN` and send its token as the `Authorization` cookie. <br>2. Send `GET /preregistration/v1/applications/prereg`. <br>3. Check: the request is rejected with HTTP 403 (exact error code to confirm on the first automated run). | Then the request is rejected with HTTP 403 (exact error code to confirm on the first automated run). | authz | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedGetAllPreRegApplications_04 | Given a non-numeric `pageIndex` query parameter, when the applicant lists their applications | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/applications/prereg` — set up the request so that: a non-numeric `pageIndex` query parameter. <br>3. Check: the request is rejected with a validation error (exact error code to confirm on the first automated run). | Then the request is rejected with a validation error (exact error code to confirm on the first automated run). | validation | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedGetAllPreRegApplications_05 | Given a logged-in applicant who owns no applications, when they list their applications | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/applications/prereg`. <br>3. Check: the service reports that no data was found for the user (`PRG_PAM_APP_005`-style) rather than failing (exact error code to confirm on the first automated run). | Then the service reports that no data was found for the user (`PRG_PAM_APP_005`-style) rather than failing (exact error code to confirm on the first automated run). | not_found | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedGetAllPreRegApplications_06 | Given `pageIndex` pointing one past the last page, when the applicant lists their applications | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/applications/prereg` — set up the request so that: `pageIndex` pointing one past the last page. <br>3. Check: the response is an empty page or a clean not-found error, never a server error. | Then the response is an empty page or a clean not-found error, never a server error. | boundary | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedGetAllPreRegApplications_07 | Given the same list request is made twice in a row, when the second call is made | 1. Log in as an applicant (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. Send `GET /preregistration/v1/applications/prereg`. <br>3. Send exactly the same request a second time. <br>4. Check: both responses are identical (read-only). | Then both responses are identical (read-only). | idempotency | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedGetAllPreRegApplications_08 | Given two applicants who each own applications, when one of them lists their applications | 1. Log in as applicant A (OTP login: `POST /preregistration/v1/login/sendOtp/langcode`, then `POST /preregistration/v1/login/validateOtp` with the OTP received) and send the `Authorization` cookie it returns on the calls below. <br>2. As applicant A, create the resource the endpoint works on and note its id. <br>3. Log in again as applicant B (a different account) and use B's `Authorization` cookie from now on. <br>4. As applicant B, try to read applicant A's application: `GET /preregistration/v1/applications/{applicationId}` with A's `applicationId`. <br>5. Check: only that applicant's own applications are returned — never another applicant's. | Then only that applicant's own applications are returned — never another applicant's. | data_isolation | integration | 🟡 not_automated |  |  |  |
 <!-- /GENERATED:grid -->
 
 **About this endpoint**

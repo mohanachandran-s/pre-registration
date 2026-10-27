@@ -5,7 +5,7 @@
 | Subject code | `PREREG-PLANNED-POSTLOGINSENDOTPWITHCAPTCHA` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-09-28 |
+| Last updated | 2026-10-27 |
 | Unit type | `endpoint` |
 | Planned | yes — no wired YAML targets this endpoint yet |
 
@@ -17,7 +17,7 @@
 
 | Total | ✅ Automated | 🟡 Not automated | ⛔ Not automatable | Coverage |
 |---|---|---|---|---|
-| 8 | 0 | 5 | 3 | 0.0% |
+| 8 | 0 | 7 | 1 | 0.0% |
 
 **Categories:** `positive` `authn` `authz` `validation` `not_found` `boundary` `idempotency` `data_isolation`
 
@@ -29,7 +29,7 @@ subject: preReg/POST_login_sendOtpWithCaptcha
 subject_code: PREREG-PLANNED-POSTLOGINSENDOTPWITHCAPTCHA
 domain: api
 owner: unassigned
-last_updated: "2026-09-28"
+last_updated: "2026-10-27"
 unit_type: endpoint
 planned: true
 units:
@@ -37,8 +37,8 @@ units:
 summary:
   total: 8
   automated: 0
-  not_automated: 5
-  not_automatable: 3
+  not_automated: 7
+  not_automatable: 1
 categories:
   - positive
   - authn
@@ -53,16 +53,16 @@ categories:
 </details>
 
 <!-- GENERATED:grid -->
-| ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
-|---|---|---|---|---|---|---|---|
-| TC_Prereg_PlannedSendOtpWithCaptcha_01 | Given a valid email or phone `userId`, a supported `langCode` and a valid captcha token, when the user submits `POST /preregistration/v1/login/sendOtpWithCaptcha` | Then the response is HTTP 200 with no `errors` and an OTP is sent to that email/phone. | positive | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedSendOtpWithCaptcha_02 | Given a caller with no `Authorization` cookie (the pre-login state), when they request an OTP with a captcha token | Then the OTP is sent — the endpoint is used before login. | authn | integration | 🟡 not_automated |  | No `@PreAuthorize` on this mapping; whether an anonymous call is allowed is decided by kernel-auth-adapter's public-URL configuration, which is not in this repo. |
-| TC_Prereg_PlannedSendOtpWithCaptcha_03 | Not applicable — see Notes. | Not applicable — see Notes. | authz | integration | ⛔ not_automatable |  | No `@PreAuthorize` on this mapping, so there is no role rule to test. |
-| TC_Prereg_PlannedSendOtpWithCaptcha_04 | Given an invalid, expired or missing captcha token (with an otherwise valid `userId`), when the user submits the request | Then no OTP is sent and the response reports a captcha validation failure (exact error code to confirm on the first automated run). | validation | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedSendOtpWithCaptcha_05 | Not applicable — see Notes. | Not applicable — see Notes. | not_found | integration | ⛔ not_automatable |  | Nothing is looked up by id: an OTP can be sent to any syntactically valid email/phone. |
-| TC_Prereg_PlannedSendOtpWithCaptcha_06 | Given a `userId` at the maximum allowed length, and one just over it, when the user submits the request | Then the at-limit request succeeds and the over-limit one is rejected with a validation error (exact error code to confirm on the first automated run). | boundary | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedSendOtpWithCaptcha_07 | Given the same user requests an OTP twice in quick succession, when the second call is made | Then the behaviour is predictable: either a fresh OTP replaces the first, or the call is throttled — never two valid OTPs at once (exact error code to confirm on the first automated run). | idempotency | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedSendOtpWithCaptcha_08 | Not applicable — see Notes. | Not applicable — see Notes. | data_isolation | integration | ⛔ not_automatable |  | Pre-login endpoint with no user session, so there is nothing to isolate between users. |
+| ID | Scenario (given/when) | Steps | Expected result (then) | Type | Tier | Status | Test | Story | Notes |
+|---|---|---|---|---|---|---|---|---|---|
+| TC_Prereg_PlannedSendOtpWithCaptcha_01 | Given a valid email or phone `userId`, a supported `langCode` and a valid captcha token, when the user submits `POST /preregistration/v1/login/sendOtpWithCaptcha` | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `POST /preregistration/v1/login/sendOtpWithCaptcha` with a valid request body (standard `id`/`version`/`requesttime`/`request` envelope). <br>3. Check: the response is HTTP 200 with no `errors` and an OTP is sent to that email/phone. | Then the response is HTTP 200 with no `errors` and an OTP is sent to that email/phone. | positive | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedSendOtpWithCaptcha_02 | Given a caller with no `Authorization` cookie (the pre-login state), when they request an OTP with a captcha token | 1. Don't log in — send the request without an `Authorization` cookie. <br>2. Send `POST /preregistration/v1/login/sendOtpWithCaptcha` with a valid request body (standard `id`/`version`/`requesttime`/`request` envelope). <br>3. Check: the OTP is sent — the endpoint is used before login. | Then the OTP is sent — the endpoint is used before login. | authn | integration | 🟡 not_automated |  |  | No role rule in the code; whether a call without a login is allowed is set in the gateway's public-URL configuration (outside this repo). |
+| TC_Prereg_PlannedSendOtpWithCaptcha_03 | Given a logged-in user whose only role is `PARTNER_ADMIN` (a role unrelated to pre-registration), when they call `POST /preregistration/v1/login/sendOtpWithCaptcha` | 1. Log in (Keycloak) as a user whose only role is `PARTNER_ADMIN` and keep its token. <br>2. Send `POST /preregistration/v1/login/sendOtpWithCaptcha` with a valid request body with that token as the `Authorization` cookie, and save the response. <br>3. Send the same request again without any cookie. <br>4. Check: both calls succeed (HTTP 200, no `errors`) with the same response. | Then the OTP is sent exactly as for a caller with no login (HTTP 200, no `errors`) — there is no role rule, so the caller's role neither blocks nor changes the result. | authz | integration | 🟡 not_automated |  |  | Expected result: checked in the service source (no `@PreAuthorize` on this mapping). |
+| TC_Prereg_PlannedSendOtpWithCaptcha_04 | Given an invalid, expired or missing captcha token (with an otherwise valid `userId`), when the user submits the request | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `POST /preregistration/v1/login/sendOtpWithCaptcha` — set up the request so that: an invalid, expired or missing captcha token (with an otherwise valid `userId`). <br>3. Check: no OTP is sent and the response reports a captcha validation failure (exact error code to confirm on the first automated run). | Then no OTP is sent and the response reports a captcha validation failure (exact error code to confirm on the first automated run). | validation | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedSendOtpWithCaptcha_05 | Given an email address that has never been used to log in before, when an OTP is requested for it through `POST /preregistration/v1/login/sendOtpWithCaptcha` with a valid captcha token | 1. Don't log in — send the request without an `Authorization` cookie. <br>2. Get a fresh captcha token from the login page. <br>3. Send `POST /preregistration/v1/login/sendOtpWithCaptcha` with `userId` = a brand-new email, a supported `langCode` and the captcha token. <br>4. Repeat with an email that has logged in before (and a new captcha token). <br>5. Check: both calls succeed with the same response shape, and an OTP arrives at each address. | Then the OTP is sent exactly as for a known user (HTTP 200, no `errors`) — the response must not reveal whether the address was already registered. | not_found | integration | 🟡 not_automated |  |  | Expected result: requirement — not yet confirmed in the code or on a live run; confirm on the first run. |
+| TC_Prereg_PlannedSendOtpWithCaptcha_06 | Given a `userId` at the maximum allowed length, and one just over it, when the user submits the request | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `POST /preregistration/v1/login/sendOtpWithCaptcha` — set up the request so that: a `userId` at the maximum allowed length, and one just over it. <br>3. Check: the at-limit request succeeds and the over-limit one is rejected with a validation error (exact error code to confirm on the first automated run). | Then the at-limit request succeeds and the over-limit one is rejected with a validation error (exact error code to confirm on the first automated run). | boundary | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedSendOtpWithCaptcha_07 | Given the same user requests an OTP twice in quick succession, when the second call is made | 1. No login needed — this endpoint is used before login (send no `Authorization` cookie). <br>2. Send `POST /preregistration/v1/login/sendOtpWithCaptcha` with a valid request body (standard `id`/`version`/`requesttime`/`request` envelope). <br>3. Send exactly the same request a second time. <br>4. Check: the behaviour is predictable: either a fresh OTP replaces the first, or the call is throttled — never two valid OTPs at once (exact error code to confirm on the first automated run). | Then the behaviour is predictable: either a fresh OTP replaces the first, or the call is throttled — never two valid OTPs at once (exact error code to confirm on the first automated run). | idempotency | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedSendOtpWithCaptcha_08 | Per-user isolation — not applicable: this is a pre-login endpoint with no user session, so there is no user whose data could leak to another. | 1. Don't log in — send the request without an `Authorization` cookie. <br>2. Send `POST /preregistration/v1/login/sendOtpWithCaptcha` for any email. <br>3. Check: the response only confirms the OTP was sent; it contains no user data. | No isolation outcome exists; who receives the OTP is checked by this file's positive row. | data_isolation | integration | ⛔ not_automatable |  |  | Not applicable: This is a pre-login endpoint with no user session, so there is no user whose data could leak to another. |
 <!-- /GENERATED:grid -->
 
 **About this endpoint**

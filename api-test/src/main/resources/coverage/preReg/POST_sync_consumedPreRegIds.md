@@ -5,7 +5,7 @@
 | Subject code | `PREREG-PLANNED-POSTSYNCCONSUMEDPREREGIDS` |
 | Domain | `api` |
 | Owner | unassigned |
-| Last updated | 2026-09-28 |
+| Last updated | 2026-10-22 |
 | Unit type | `endpoint` |
 | Planned | yes — no wired YAML targets this endpoint yet |
 
@@ -29,7 +29,7 @@ subject: preReg/POST_sync_consumedPreRegIds
 subject_code: PREREG-PLANNED-POSTSYNCCONSUMEDPREREGIDS
 domain: api
 owner: unassigned
-last_updated: "2026-09-28"
+last_updated: "2026-10-22"
 unit_type: endpoint
 planned: true
 units:
@@ -53,16 +53,16 @@ categories:
 </details>
 
 <!-- GENERATED:grid -->
-| ID | Scenario (given/when) | Expected result (then) | Type | Tier | Status | Test | Notes |
-|---|---|---|---|---|---|---|---|
-| TC_Prereg_PlannedSyncConsumedIds_01 | Given pre-registrations that were turned into registrations, when the registration processor submits `POST /preregistration/v1/sync/consumedPreRegIds` with their ids | Then the response is HTTP 200 with the count of ids stored as consumed. | positive | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedSyncConsumedIds_02 | Given a caller with no valid `Authorization` cookie, when they report consumed pre-registration ids | Then the request is rejected as unauthenticated (HTTP 401) before reaching the controller (exact error code to confirm on the first automated run). | authn | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedSyncConsumedIds_03 | Given a caller holding only `INDIVIDUAL`, when they submit `POST /preregistration/v1/sync/consumedPreRegIds` | Then the request is rejected with HTTP 403 — only `REGISTRATION_OFFICER, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN, REGISTRATION_PROCESSOR` may report consumed ids. | authz | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedSyncConsumedIds_04 | Given an empty id list or a missing `preRegistrationIds` field, when the request is submitted | Then it is rejected with a validation error (exact error code to confirm on the first automated run). | validation | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedSyncConsumedIds_05 | Given ids that don't correspond to any pre-registration, when they are reported as consumed | Then they are reported back as not found or skipped, and existing data is unaffected (exact error code to confirm on the first automated run). | not_found | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedSyncConsumedIds_06 | Given a large batch of ids (hundreds), when it is submitted | Then every id is stored and the count matches. | boundary | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedSyncConsumedIds_07 | Given the same ids are reported as consumed twice, when the second call is made | Then no duplicate consumed records are created. | idempotency | integration | 🟡 not_automated |  |  |
-| TC_Prereg_PlannedSyncConsumedIds_08 | Not applicable — see Notes. | Not applicable — see Notes. | data_isolation | integration | ⛔ not_automatable |  | Back-office endpoint for the registration processor; it is not scoped per applicant. |
+| ID | Scenario (given/when) | Steps | Expected result (then) | Type | Tier | Status | Test | Story | Notes |
+|---|---|---|---|---|---|---|---|---|---|
+| TC_Prereg_PlannedSyncConsumedIds_01 | Given pre-registrations that were turned into registrations, when the registration processor submits `POST /preregistration/v1/sync/consumedPreRegIds` with their ids | 1. Log in (Keycloak) as a user with the `REGISTRATION_OFFICER` role and send its token as the `Authorization` cookie on the calls below. <br>2. Send `POST /preregistration/v1/sync/consumedPreRegIds` with a valid request body (standard `id`/`version`/`requesttime`/`request` envelope). <br>3. Check: the response is HTTP 200 with the count of ids stored as consumed. | Then the response is HTTP 200 with the count of ids stored as consumed. | positive | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedSyncConsumedIds_02 | Given a caller with no valid `Authorization` cookie, when they report consumed pre-registration ids | 1. Don't log in — send the request without an `Authorization` cookie. <br>2. Send `POST /preregistration/v1/sync/consumedPreRegIds` with a valid request body (standard `id`/`version`/`requesttime`/`request` envelope). <br>3. Check: the request is rejected as unauthenticated (HTTP 401) before reaching the controller (exact error code to confirm on the first automated run). | Then the request is rejected as unauthenticated (HTTP 401) before reaching the controller (exact error code to confirm on the first automated run). | authn | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedSyncConsumedIds_03 | Given a caller holding only `INDIVIDUAL`, when they submit `POST /preregistration/v1/sync/consumedPreRegIds` | 1. Log in as a user whose only role is `INDIVIDUAL` and send its token as the `Authorization` cookie. <br>2. Send `POST /preregistration/v1/sync/consumedPreRegIds` with a valid request body (standard `id`/`version`/`requesttime`/`request` envelope). <br>3. Check: the request is rejected with HTTP 403 — only `REGISTRATION_OFFICER, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN, REGISTRATION_PROCESSOR` may report consumed ids. | Then the request is rejected with HTTP 403 — only `REGISTRATION_OFFICER, REGISTRATION_SUPERVISOR, REGISTRATION_ADMIN, REGISTRATION_PROCESSOR` may report consumed ids. | authz | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedSyncConsumedIds_04 | Given an empty id list or a missing `preRegistrationIds` field, when the request is submitted | 1. Log in (Keycloak) as a user with the `REGISTRATION_OFFICER` role and send its token as the `Authorization` cookie on the calls below. <br>2. Send `POST /preregistration/v1/sync/consumedPreRegIds` — set up the request so that: an empty id list or a missing `preRegistrationIds` field. <br>3. Check: it is rejected with a validation error (exact error code to confirm on the first automated run). | Then it is rejected with a validation error (exact error code to confirm on the first automated run). | validation | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedSyncConsumedIds_05 | Given ids that don't correspond to any pre-registration, when they are reported as consumed | 1. Log in (Keycloak) as a user with the `REGISTRATION_OFFICER` role and send its token as the `Authorization` cookie on the calls below. <br>2. Send `POST /preregistration/v1/sync/consumedPreRegIds` — set up the request so that: ids that don't correspond to any pre-registration. <br>3. Check: they are reported back as not found or skipped, and existing data is unaffected (exact error code to confirm on the first automated run). | Then they are reported back as not found or skipped, and existing data is unaffected (exact error code to confirm on the first automated run). | not_found | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedSyncConsumedIds_06 | Given a large batch of ids (hundreds), when it is submitted | 1. Log in (Keycloak) as a user with the `REGISTRATION_OFFICER` role and send its token as the `Authorization` cookie on the calls below. <br>2. Send `POST /preregistration/v1/sync/consumedPreRegIds` — set up the request so that: a large batch of ids (hundreds). <br>3. Check: every id is stored and the count matches. | Then every id is stored and the count matches. | boundary | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedSyncConsumedIds_07 | Given the same ids are reported as consumed twice, when the second call is made | 1. Log in (Keycloak) as a user with the `REGISTRATION_OFFICER` role and send its token as the `Authorization` cookie on the calls below. <br>2. Send `POST /preregistration/v1/sync/consumedPreRegIds` with a valid request body (standard `id`/`version`/`requesttime`/`request` envelope). <br>3. Send exactly the same request a second time. <br>4. Check: no duplicate consumed records are created. | Then no duplicate consumed records are created. | idempotency | integration | 🟡 not_automated |  |  |  |
+| TC_Prereg_PlannedSyncConsumedIds_08 | Per-applicant isolation — not applicable: this is a back-office endpoint the registration processor uses to mark applications as consumed; it is not scoped per applicant. | 1. Log in (Keycloak) as the registration-processor user and send its token as the `Authorization` cookie. <br>2. Send `POST /preregistration/v1/sync/consumedPreRegIds` with ids belonging to two different applicants. <br>3. Check: the request is not limited to one applicant's ids. | No isolation outcome exists: the processor acts on any applicant's ids by design; applicants cannot call it (see this file's `authz` row). | data_isolation | integration | ⛔ not_automatable |  |  | Not applicable: This is a back-office endpoint the registration processor uses to mark applications as consumed; it is not scoped per applicant. |
 <!-- /GENERATED:grid -->
 
 **About this endpoint**
