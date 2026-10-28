@@ -8,7 +8,7 @@ To filter or sort individual test cases across every file, open `coverage.html` 
 
 | Total | ✅ Automated | 🟡 Not automated | ⛔ Not automatable | Coverage |
 |---|---|---|---|---|
-| 753 | 311 | 419 | 23 | 42.6% |
+| 753 | 318 | 412 | 23 | 43.6% |
 
 ## By subject
 
@@ -27,7 +27,7 @@ To filter or sort individual test cases across every file, open `coverage.html` 
 | `PREREG-DELETELOSTUINAPPLICATION` | 5/11 | 11 | 45.5% |
 | `PREREG-DELETEPREREGISTRATION` | 2/9 | 9 | 22.2% |
 | `PREREG-DELETESPECIFICDOCFORAPRID` | 4/10 | 10 | 40.0% |
-| `PREREG-FETCHAPPLICATIONBYPRID` | 3/9 | 9 | 33.3% |
+| `PREREG-FETCHAPPLICATIONBYPRID` | 6/9 | 9 | 66.7% |
 | `PREREG-FETCHAPPOINTMENTDETAILSBYPRID` | 4/13 | 13 | 30.8% |
 | `PREREG-FETCHAVAILABILITYDATA` | 2/16 | 16 | 12.5% |
 | `PREREG-GETALLAPPLICATIONS` | 4/17 | 17 | 23.5% |
@@ -40,7 +40,7 @@ To filter or sort individual test cases across every file, open `coverage.html` 
 | `PREREG-GETAPPOINTMENTDETAILS` | 5/11 | 11 | 45.5% |
 | `PREREG-GETAVAILABLESLOTFORREGCENTREID` | 3/9 | 9 | 33.3% |
 | `PREREG-GETBOOKINGSFORREGCENTER` | 4/19 | 25 | 21.1% |
-| `PREREG-GETPREREGDEMOGRAPHICDATABYPRID` | 3/18 | 18 | 16.7% |
+| `PREREG-GETPREREGDEMOGRAPHICDATABYPRID` | 7/18 | 18 | 38.9% |
 | `PREREG-GETPREREGINFOBYPRID` | 3/9 | 9 | 33.3% |
 | `PREREG-GETPRIDBYDATERANGE` | 19/25 | 25 | 76.0% |
 | `PREREG-GETPRIDFORREGCENT` | 2/16 | 16 | 12.5% |
@@ -78,11 +78,11 @@ To filter or sort individual test cases across every file, open `coverage.html` 
 | Category | ✅ Automated | 🟡 Not automated | ⛔ Not automatable | Coverage |
 |---|---|---|---|---|
 | `positive` | 81 | 27 | 2 | 75.0% |
-| `authn` | 1 | 64 | 0 | 1.5% |
+| `authn` | 3 | 62 | 0 | 4.6% |
 | `authz` | 0 | 65 | 0 | 0.0% |
-| `validation` | 133 | 42 | 2 | 76.0% |
-| `not_found` | 32 | 32 | 9 | 50.0% |
-| `boundary` | 2 | 62 | 1 | 3.1% |
+| `validation` | 135 | 40 | 2 | 77.1% |
+| `not_found` | 33 | 31 | 9 | 51.6% |
+| `boundary` | 4 | 60 | 1 | 6.3% |
 | `idempotency` | 1 | 64 | 0 | 1.5% |
 | `data_isolation` | 0 | 56 | 9 | 0.0% |
 | `multilang` | 2 | 0 | 0 | 100.0% |
@@ -110,6 +110,7 @@ Rows whose Notes are flagged ⚠️ (fragility/quality concern) or 🛑 (confirm
 - 🛑 **preReg/DeleteLostUinApplication** (`TC_prereg_DeleteLostUinApplication_01`): 🛑 This whole file's automated tests call the wrong endpoint: they delete a normal pre-registration through `DELETE /applications/prereg/{id}` (the same call as `DeletePreRegistration.md`) instead of the lost-UIN delete `DELETE /applications/lostuin/{applicationId}`, and they never create a lost-UIN application. So real lost-UIN deletion has no automated test yet — the manual rows in this file describe it. Legacy: REG_TC_219.
 - ⚠️ **preReg/DeleteSpecificDocForaPRID** (`TC_prereg_DeleteSpecificDocForaPRID_01`): ⚠️ `restMethod: post` in the YAML was inaccurate (corrected to `delete` 2026-09-25) — see Technical details below. Legacy: REG_TC_101.
 - ⚠️ **preReg/DeleteSpecificDocForaPRID** (`TC_prereg_DeleteSpecificDocForaPRID_03`): ⚠️ Possible bug: the service does not check that the document exists before using it (see Technical details). ⚠️ Test issue: the `documentId` in the YAML (`53fhv@fgjd_Smoke_sid_docId$`) looks like a broken reference, sent as-is; it still works as an unknown id. Legacy: REG_TC_102.
+- ⚠️ **preReg/FetchApplicationByPrid** (`TC_Prereg_FetchApplicationByPrid_03`): ⚠️ Possible bug: MOSIP-45714. On released the service answers this call with HTTP 500 (Spring default body) instead of `KER-ATH-401`, so the case fails until that is fixed; it is not marked as a known issue. Automated with `role: noauth` (empty `Authorization` cookie) against a real id, so the 401 can't be a not-found; the first run confirms the error body. Expected result: from the shared MOSIP auth library (kernel-auth-adapter) — other modules' tests assert the same codes.
 - ⚠️ **preReg/FetchAppointmentDetailsByPrid** (`TC_prereg_FetchAppointmentDetailsByPrid_01`): ⚠️ Test gap: the application used here is never booked first, so the test passes whether or not a booking exists. Check what `registration_center_id` = `10003` means without a booking. Legacy: REG_TC_181, TC-MOSIP-11719-13, TC-MOSIP-17633-25.
 - 🛑 **preReg/GetAllApplicationsWithapplicationId** (`TC_prereg_GetAllApplicationsWithapplicationId_02`): 🛑 Mislabelled test: its name says "expired application", but nothing expires the application first and no status is checked — it repeats the positive test above. Fetching an expired application is still untested. Legacy: REG_TC_232.
 - 🛑 **preReg/GetAllPreRegApplications** (`TC_prereg_GetAllPreRegApplications_02`): 🛑 Mislabelled test: its name says lost-UIN applications appear in the list, but it sends the same request and checks the same thing as the basic list test above. Lost-UIN applications in the list are still untested. Legacy: REG_TC_217.
@@ -119,6 +120,7 @@ Rows whose Notes are flagged ⚠️ (fragility/quality concern) or 🛑 (confirm
 - ⚠️ **preReg/GetAppointmentDetails** (`TC_prereg_GetAppointmentDetails_03`): ⚠️ See the Technical details section below — this subject's `endPoint:` may not resolve to any real controller mapping. Legacy: REG_TC_185.
 - ⚠️ **preReg/GetAppointmentDetails** (`TC_prereg_GetAppointmentDetails_02`): ⚠️ Test gap: only `registration_center_id` is checked, so the test does not show that the cancellation is reflected. Add a status check if that is the intent. Legacy: REG_TC_184.
 - 🛑 **preReg/GetBookingsForRegCenter** (`TC_prereg_GetBookingsForRegCenter_03`): 🛑 Wrong expected code: a non-numeric centre id is rejected first with `PRG_APP_013`, never `PRG_BOOK_RCI_032`. Row `_04` sends the same centre id and correctly expects `PRG_APP_013`. Details: `ApplicationService.getBookingsForRegCenter` checks the centre id (digits only) before anything else. Legacy: REG_TC_240.
+- ⚠️ **preReg/GetPreRegDemographicDataByPrid** (`TC_Prereg_GetPreRegDemographicDataByPrid_03`): ⚠️ Possible bug: MOSIP-45714. On released the service answers this call with HTTP 500 (Spring default body) instead of `KER-ATH-401`, so the case fails until that is fixed; it is not marked as a known issue. Same test as `FetchApplicationByPrid.md` row `TC_Prereg_FetchApplicationByPrid_03`: same endpoint, automated once there so the coverage isn't duplicated. Expected result: from the shared MOSIP auth library (kernel-auth-adapter) — other modules' tests assert the same codes.
 - 🛑 **preReg/GetPreRegDemographicDataByPrid** (`TC_prereg_GetPreRegDemographicDataByPrid_02`): 🛑 Test issue: this negative test calls the `info` endpoint (`/applications/prereg/info/{id}`) instead of this file's own endpoint — most likely a copy-paste slip. The expected code still holds because both endpoints use the same lookup, but this file's own not-found case is only covered indirectly. Legacy: TC_LTS_PR_12, REG_TC_213, TC-MOSIP-17633-49.
 - ⚠️ **preReg/GetPRIDByDateRange** (`TC_prereg_GetPRIDByDateRange_02`): ⚠️ Fragile expected code: the shared validator builds the code from the enum, so `PRG_CORE_REQ_001` is reported as `PRG_PAM_CORE_001`. See `TC_Prereg_CreatePrereg_17`. Legacy: REG_TC_172.
 - ⚠️ **preReg/GetPRIDByDateRange** (`TC_prereg_GetPRIDByDateRange_17`): ⚠️ A blank `toDate` skips the service's own date check, so it fails later in the booking service (`PRG_BOOK_RCI_032`, confirmable only on a live run). Legacy: REG_TC_170.
