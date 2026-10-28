@@ -1108,7 +1108,7 @@ public class NotificationServiceTest {
 		for (String lang : new String[] { "eng", "ara" }) {
 			KeyValuePairDto<String, String> requestName = new KeyValuePairDto<>();
 			requestName.setKey(lang);
-			requestName.setValue("sanober Noor");
+			requestName.setValue("sanober Noor " + lang);
 			requestNames.add(requestName);
 		}
 		notificationDTO.setFullName(requestNames);
@@ -1121,7 +1121,10 @@ public class NotificationServiceTest {
 
 		assertEquals(NotificationRequestCodes.MESSAGE.getCode(), result.getResponse().getMessage());
 		assertEquals(2, notificationDTO.getFullName().size());
+		assertEquals("eng", notificationDTO.getFullName().get(0).getKey());
+		assertEquals("sanober Noor eng", notificationDTO.getFullName().get(0).getValue());
 		assertEquals("ara", notificationDTO.getFullName().get(1).getKey());
+		assertEquals("sanober Noor ara", notificationDTO.getFullName().get(1).getValue());
 		Mockito.verify(notificationUtil).notify(Mockito.eq(NotificationRequestCodes.EMAIL.getCode()),
 				Mockito.any(NotificationDTO.class), Mockito.any(),
 				Mockito.eq(BookingTypeCodes.NEW_PREREGISTRATION.toString()));
