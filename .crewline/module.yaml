@@ -1,0 +1,22 @@
+module: pre-registration
+remotes:
+- https://github.com/mosip/pre-registration.git
+verified_at:
+  commit: b1691c23f44daf0e9895f5a182ab910f314059cc
+  date: '2026-10-29T13:22:56Z'
+stack:
+  maven_parent: pre-registration/pom.xml
+  node_projects: []
+  ui_test_projects: []
+  api_test: true
+roles:
+  development:
+  - development/local-context.md
+  - development/discovery.json
+  qa:
+  - qa/module-context.md
+  - qa/known-issues.md
+  - qa/dependencies.md
+  - qa/profile.yaml
+guidance:
+- AGENTS.md

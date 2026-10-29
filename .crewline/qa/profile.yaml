@@ -1,0 +1,31 @@
+# Crewline validator profile for pre-registration/api-test (`crewline testcase | expected-diff` read it by default).
+# Every rule is derived from the repository; evidence in module-context.md. Verified at b1691c23f4 (develop, 2026-10-29).
+module_code: PREREG
+resources_root: src/main/resources
+suite_files: [testNgXmlFiles/preregSuite.xml]
+exclude_dirs: [config, dbFiles]
+
+# Not in the suite or not parseable (KI-PR-002); the owner decides whether to fix and wire or delete them.
+ignore_yaml:
+  - preReg/AuditLog/AuditLog.yml
+  - preReg/BookMultipleAppointment/BookMultipleAppointment.yml
+  - preReg/UpdatePridStatus/UpdatePridStatus.yml
+
+testcase_rules:
+  case_name_prefix: Prereg_                         # 382/382 cases
+  # 381/381 identifiers match; the module token is spelled `prereg` or `Prereg` (KI-PR-004), both accepted.
+  unique_identifier_pattern: '^TC_(?i:prereg)_[A-Za-z0-9]+_\d+$'
+  # Fields a script class stores besides the suite's idKeyName, gated on `_pos` rather than `_sid`
+  # (CreatePreReg.java:156-158, UpdatePrereg.java:141-143).
+  extra_id_fields_by_class:
+    CreatePreReg: [EMAIL, PHONE]
+    UpdatePrereg: [EMAIL, PHONE]
+  extra_id_fields_gate:
+    CreatePreReg: _pos
+    UpdatePrereg: _pos
+  # The ID key comes from each case's input field (PreRegPiiRequest.java:95,130-132).
+  id_key_from_input:
+    PreRegPiiRequest: _idKeyName
+  capture_without_sid: []
+  severity:
+    NAME-003: WARN                                  # style only; existing files mix subject spellings

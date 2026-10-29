@@ -1,0 +1,343 @@
+{
+  "repo_name": "pre-registration",
+  "head": "b1691c23f44daf0e9895f5a182ab910f314059cc",
+  "branch": "crewline/onboarding",
+  "remotes": [
+    "https://github.com/mosip/pre-registration.git"
+  ],
+  "discovered_at": "2026-10-29T13:22:56Z",
+  "maven": {
+    "poms": [
+      {
+        "path": "pre-registration/pom.xml",
+        "kind": "service",
+        "artifact": "pre-registration-parent",
+        "modules": [
+          "pre-registration-core",
+          "pre-registration-application-service",
+          "pre-registration-datasync-service",
+          "pre-registration-batchjob",
+          "pre-registration-captcha-service"
+        ],
+        "java_version": "21",
+        "java_version_ref": "pre-registration/pom.xml:19",
+        "jacoco": true,
+        "jacoco_ref": "pre-registration/pom.xml:281",
+        "surefire_argline": [
+          "${argLine}"
+        ],
+        "surefire_argline_keeps_agent": true,
+        "test_libs": [
+          "junit",
+          "junit-vintage-engine",
+          "mockito-core"
+        ]
+      },
+      {
+        "path": "pre-registration/pre-registration-application-service/pom.xml",
+        "kind": "service",
+        "artifact": "pre-registration-application-service",
+        "modules": [],
+        "java_version": null,
+        "java_version_ref": "pre-registration/pre-registration-application-service/pom.xml",
+        "jacoco": false,
+        "jacoco_ref": "",
+        "surefire_argline": [],
+        "surefire_argline_keeps_agent": true,
+        "test_libs": [
+          "junit",
+          "junit-vintage-engine"
+        ]
+      },
+      {
+        "path": "pre-registration/pre-registration-batchjob/pom.xml",
+        "kind": "service",
+        "artifact": "pre-registration-batchjob",
+        "modules": [],
+        "java_version": null,
+        "java_version_ref": "pre-registration/pre-registration-batchjob/pom.xml",
+        "jacoco": false,
+        "jacoco_ref": "",
+        "surefire_argline": [],
+        "surefire_argline_keeps_agent": true,
+        "test_libs": [
+          "junit",
+          "junit-vintage-engine"
+        ]
+      },
+      {
+        "path": "pre-registration/pre-registration-captcha-service/pom.xml",
+        "kind": "service",
+        "artifact": "pre-registration-captcha-service",
+        "modules": [],
+        "java_version": null,
+        "java_version_ref": "pre-registration/pre-registration-captcha-service/pom.xml",
+        "jacoco": false,
+        "jacoco_ref": "",
+        "surefire_argline": [],
+        "surefire_argline_keeps_agent": true,
+        "test_libs": [
+          "junit",
+          "junit-vintage-engine",
+          "spring-boot-starter-test"
+        ]
+      },
+      {
+        "path": "pre-registration/pre-registration-core/pom.xml",
+        "kind": "service",
+        "artifact": "pre-registration-core",
+        "modules": [],
+        "java_version": null,
+        "java_version_ref": "pre-registration/pre-registration-core/pom.xml",
+        "jacoco": false,
+        "jacoco_ref": "",
+        "surefire_argline": [],
+        "surefire_argline_keeps_agent": true,
+        "test_libs": [
+          "junit",
+          "junit-vintage-engine"
+        ]
+      },
+      {
+        "path": "pre-registration/pre-registration-datasync-service/pom.xml",
+        "kind": "service",
+        "artifact": "pre-registration-datasync-service",
+        "modules": [],
+        "java_version": null,
+        "java_version_ref": "pre-registration/pre-registration-datasync-service/pom.xml",
+        "jacoco": false,
+        "jacoco_ref": "",
+        "surefire_argline": [],
+        "surefire_argline_keeps_agent": true,
+        "test_libs": [
+          "junit",
+          "junit-vintage-engine",
+          "spring-boot-starter-test"
+        ]
+      }
+    ],
+    "parent": "pre-registration/pom.xml"
+  },
+  "services": {
+    "pre-registration/pre-registration-application-service": {
+      "test_files": 35,
+      "main_files": 193,
+      "springboottest": 15,
+      "mockmvc": 12,
+      "webmvctest": 12,
+      "component_test_example": "pre-registration/pre-registration-application-service/src/test/java/io/mosip/preregistration/application/test/controller/ApplicationControllerTest.java"
+    },
+    "pre-registration/pre-registration-batchjob": {
+      "test_files": 4,
+      "main_files": 59,
+      "component_test_example": ""
+    },
+    "pre-registration/pre-registration-captcha-service": {
+      "test_files": 3,
+      "main_files": 13,
+      "springboottest": 3,
+      "component_test_example": ""
+    },
+    "pre-registration/pre-registration-core": {
+      "test_files": 11,
+      "main_files": 152,
+      "mockmvc": 1,
+      "springboottest": 5,
+      "component_test_example": ""
+    },
+    "pre-registration/pre-registration-datasync-service": {
+      "test_files": 6,
+      "main_files": 38,
+      "mockmvc": 1,
+      "springboottest": 3,
+      "component_test_example": "pre-registration/pre-registration-datasync-service/src/test/java/io/mosip/preregistration/datasync/test/controller/DataSyncControllerTest.java"
+    }
+  },
+  "ui_test_projects": [],
+  "node": [],
+  "ci": {
+    "workflows": [
+      "chart-lint-publish.yml",
+      "codeql_custom.yml",
+      "db-test.yml",
+      "push-trigger.yml",
+      "use-pr-linker.yml"
+    ],
+    "uses": [
+      "8398a7/action-slack",
+      "actions/checkout",
+      "actions/setup-java",
+      "actions/upload-artifact",
+      "github/codeql-action/analyze",
+      "github/codeql-action/init",
+      "mosip/kattu/.github/workflows/chart-lint-publish.yml",
+      "mosip/kattu/.github/workflows/db-test.yml",
+      "mosip/kattu/.github/workflows/docker-build.yml",
+      "mosip/kattu/.github/workflows/link-pr-to-issue.yml",
+      "mosip/kattu/.github/workflows/maven-build.yml",
+      "mosip/kattu/.github/workflows/maven-publish-to-nexus.yml",
+      "mosip/kattu/.github/workflows/maven-sonar-analysis.yml"
+    ]
+  },
+  "db": {
+    "dirs": [
+      "db_upgrade_scripts",
+      "db_release_scripts",
+      "db_scripts"
+    ],
+    "forward": 9,
+    "unpaired": []
+  },
+  "deploy": {
+    "helm": [
+      "helm/prereg-application",
+      "helm/prereg-batchjob",
+      "helm/prereg-captcha",
+      "helm/prereg-datasync"
+    ],
+    "dockerfiles": [
+      "api-test/Dockerfile",
+      "pre-registration/pre-registration-application-service/Dockerfile",
+      "pre-registration/pre-registration-batchjob/Dockerfile",
+      "pre-registration/pre-registration-captcha-service/Dockerfile",
+      "pre-registration/pre-registration-datasync-service/Dockerfile"
+    ]
+  },
+  "guidance": [
+    "AGENTS.md"
+  ],
+  "api_test": {
+    "root": "api-test",
+    "suite_files": [
+      "testNgXmlFiles/preregSuite.xml"
+    ],
+    "yaml_files": 53,
+    "cases": 382,
+    "with_unique_identifier": 381,
+    "parse_errors": {
+      "preReg/AuditLog/AuditLog.yml": "while scanning for the next token"
+    },
+    "unwired_yaml": [
+      "preReg/BookMultipleAppointment/BookMultipleAppointment.yml",
+      "preReg/UpdatePridStatus/UpdatePridStatus.yml"
+    ],
+    "script_classes": {
+      "GetWithParam": 17,
+      "SimplePost": 7,
+      "DeleteWithParam": 6,
+      "PutWithPathParam": 5,
+      "PreRegDbValidator": 4,
+      "PreRegPiiRequest": 3,
+      "CreatePreReg": 1,
+      "UpdatePrereg": 1,
+      "PostWithFormPathParamAndFile": 1,
+      "BookAppoinment": 1,
+      "BookAppoinmentByPrid": 1,
+      "GetWithParamForAutoGenId": 1,
+      "PostWithFormDataAndFileForNotificationAPI": 1,
+      "SimplePostForAutoGenId": 1
+    },
+    "id_key_names": [
+      "applicationId",
+      "appointment_date",
+      "docId",
+      "preRegistrationId",
+      "time_slot_from"
+    ],
+    "case_name_prefix": [
+      "Prereg_",
+      382
+    ],
+    "case_name_families": {
+      "Prereg_": 382
+    },
+    "case_name_deviations": {},
+    "uid_module_token": [
+      [
+        "prereg",
+        351
+      ],
+      [
+        "Prereg",
+        30
+      ]
+    ],
+    "uid_pattern": "^TC_(?i:prereg)_[A-Za-z0-9]+_\\d+$",
+    "uid_pattern_matches": 381,
+    "duplicate_uids": [
+      "tc_prereg_uploaddocument_01",
+      "tc_prereg_uploaddocument_02"
+    ],
+    "coverage_matrix": false,
+    "profile": {
+      "module_code": "PREREG",
+      "resources_root": "src/main/resources",
+      "suite_files": [
+        "testNgXmlFiles/preregSuite.xml"
+      ],
+      "exclude_dirs": [
+        "config",
+        "dbFiles"
+      ],
+      "ignore_yaml": [
+        "preReg/BookMultipleAppointment/BookMultipleAppointment.yml",
+        "preReg/UpdatePridStatus/UpdatePridStatus.yml"
+      ],
+      "testcase_rules": {
+        "case_name_prefix": "Prereg_",
+        "unique_identifier_pattern": "^TC_(?i:prereg)_[A-Za-z0-9]+_\\d+$",
+        "extra_id_fields_by_class": {
+          "CreatePreReg": [
+            "EMAIL",
+            "PHONE"
+          ],
+          "UpdatePrereg": [
+            "EMAIL",
+            "PHONE"
+          ]
+        },
+        "extra_id_fields_gate": {
+          "CreatePreReg": "_pos",
+          "UpdatePrereg": "_pos"
+        },
+        "capture_without_sid": [],
+        "id_key_from_input": {
+          "PreRegPiiRequest": "_idKeyName"
+        },
+        "severity": {
+          "NAME-003": "WARN"
+        }
+      }
+    },
+    "id_capture": {
+      "extra_id_fields_by_class": {
+        "CreatePreReg": [
+          "EMAIL",
+          "PHONE"
+        ],
+        "UpdatePrereg": [
+          "EMAIL",
+          "PHONE"
+        ]
+      },
+      "extra_id_fields_gate": {
+        "CreatePreReg": "_pos",
+        "UpdatePrereg": "_pos"
+      },
+      "capture_without_sid": [],
+      "id_key_from_input": {
+        "PreRegPiiRequest": "_idKeyName"
+      }
+    }
+  },
+  "baseline": {
+    "status": "FAIL",
+    "summary": "6 blocking, 71 warning(s), 0 info, 0 approved",
+    "by_rule": {
+      "YAML-PARSE": 1,
+      "NAME-004": 4,
+      "NAME-003": 71,
+      "DEP-001": 1
+    }
+  }
+}
