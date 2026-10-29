@@ -547,12 +547,22 @@ public class NotificationService {
 	/**
 	 * Names used when the identity carries no name field (MOSIP-38854): the per-language names the
 	 * request already carried, else one entry in the request language with the requested name, or the
-	 * pre-registration id when none was given.
+	 * pre-registration id when none was given. A request entry without a name keeps its language and
+	 * is named by the pre-registration id.
 	 */
 	private List<KeyValuePairDto<String, String>> fallbackNamePairs(NotificationDTO notificationDto,
 			String langCode) {
-		if (notificationDto.getFullName() != null && !notificationDto.getFullName().isEmpty()) {
-			return notificationDto.getFullName();
+		List<KeyValuePairDto<String, String>> requestNames = notificationDto.getFullName();
+		if (requestNames != null && !requestNames.isEmpty()) {
+			List<KeyValuePairDto<String, String>> namePairs = new ArrayList<>();
+			for (KeyValuePairDto<String, String> requestName : requestNames) {
+				String name = requestName.getValue();
+				KeyValuePairDto<String, String> namePair = new KeyValuePairDto<>();
+				namePair.setKey(requestName.getKey());
+				namePair.setValue(name != null && !name.trim().isEmpty() ? name : notificationDto.getPreRegistrationId());
+				namePairs.add(namePair);
+			}
+			return namePairs;
 		}
 		KeyValuePairDto<String, String> namePair = new KeyValuePairDto<>();
 		namePair.setKey(langCode);

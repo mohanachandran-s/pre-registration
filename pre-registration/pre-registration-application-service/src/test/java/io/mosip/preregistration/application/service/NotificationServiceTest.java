@@ -1129,4 +1129,76 @@ public class NotificationServiceTest {
 				Mockito.any(NotificationDTO.class), Mockito.any(),
 				Mockito.eq(BookingTypeCodes.NEW_PREREGISTRATION.toString()));
 	}
+
+	/**
+	 * AC-3: with no name field in the identity and no requested name, the request's name entry (as
+	 * createNotificationDetails builds it) is named by the pre-registration id so the templates still render.
+	 */
+	@Test
+	public void sendNotificationFallsBackToPreRegistrationIdWhenNoNameIsAvailable() throws Exception {
+		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		notificationDTO.setName(null);
+		notificationDTO.setFullName(namePairs("eng", null));
+		stubNotificationRequest();
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicWithNameFields());
+
+		MainResponseDTO<io.mosip.preregistration.application.dto.NotificationResponseDTO> result = notificationService
+				.sendNotification(null, "eng", file, false);
+
+		assertEquals(NotificationRequestCodes.MESSAGE.getCode(), result.getResponse().getMessage());
+		assertEquals(1, notificationDTO.getFullName().size());
+		assertEquals("eng", notificationDTO.getFullName().get(0).getKey());
+		assertEquals("20180396713560", notificationDTO.getFullName().get(0).getValue());
+		Mockito.verify(notificationUtil).notify(Mockito.eq(NotificationRequestCodes.EMAIL.getCode()),
+				Mockito.any(NotificationDTO.class), Mockito.any(),
+				Mockito.eq(BookingTypeCodes.NEW_PREREGISTRATION.toString()));
+	}
+
+	/** AC-3: a DTO without request names or a requested name gets one entry named by the pre-registration id. */
+	@Test
+	public void sendNotificationNamesByPreRegistrationIdWhenDtoCarriesNoNames() throws Exception {
+		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		notificationDTO.setName(null);
+		stubNotificationRequest();
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicWithNameFields());
+
+		MainResponseDTO<io.mosip.preregistration.application.dto.NotificationResponseDTO> result = notificationService
+				.sendNotification(null, "eng", file, false);
+
+		assertEquals(NotificationRequestCodes.MESSAGE.getCode(), result.getResponse().getMessage());
+		assertEquals(1, notificationDTO.getFullName().size());
+		assertEquals("eng", notificationDTO.getFullName().get(0).getKey());
+		assertEquals("20180396713560", notificationDTO.getFullName().get(0).getValue());
+	}
+
+	/** AC-4: per-language names - a language the request left blank is named by the pre-registration id. */
+	@Test
+	public void sendNotificationV2NamesBlankRequestLanguageByPreRegistrationId() throws Exception {
+		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		notificationDTO.setFullName(namePairs("eng", "sanober Noor eng", "ara", " "));
+		stubNotificationRequest();
+		Mockito.when(applicationServiceIntf.getApplicationInfoInternal(Mockito.any())).thenReturn(appEntity);
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicWithNameFields());
+
+		MainResponseDTO<io.mosip.preregistration.application.dto.NotificationResponseDTO> result = notificationService
+				.sendNotificationV2(null, null, file, true);
+
+		assertEquals(NotificationRequestCodes.MESSAGE.getCode(), result.getResponse().getMessage());
+		assertEquals(2, notificationDTO.getFullName().size());
+		assertEquals("sanober Noor eng", notificationDTO.getFullName().get(0).getValue());
+		assertEquals("ara", notificationDTO.getFullName().get(1).getKey());
+		assertEquals("20180396713560", notificationDTO.getFullName().get(1).getValue());
+	}
+
+	/** Builds request name entries from alternating language / name arguments. */
+	private List<KeyValuePairDto<String, String>> namePairs(String... languageAndName) {
+		List<KeyValuePairDto<String, String>> names = new ArrayList<>();
+		for (int i = 0; i < languageAndName.length; i += 2) {
+			KeyValuePairDto<String, String> name = new KeyValuePairDto<>();
+			name.setKey(languageAndName[i]);
+			name.setValue(languageAndName[i + 1]);
+			names.add(name);
+		}
+		return names;
+	}
 }
