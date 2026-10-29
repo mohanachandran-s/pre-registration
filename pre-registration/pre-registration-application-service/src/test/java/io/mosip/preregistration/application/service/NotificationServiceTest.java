@@ -1169,6 +1169,9 @@ public class NotificationServiceTest {
 		assertEquals(1, notificationDTO.getFullName().size());
 		assertEquals("eng", notificationDTO.getFullName().get(0).getKey());
 		assertEquals("20180396713560", notificationDTO.getFullName().get(0).getValue());
+		Mockito.verify(notificationUtil).notify(Mockito.eq(NotificationRequestCodes.EMAIL.getCode()),
+				Mockito.any(NotificationDTO.class), Mockito.any(),
+				Mockito.eq(BookingTypeCodes.NEW_PREREGISTRATION.toString()));
 	}
 
 	/** AC-4: per-language names - a language the request left blank is named by the pre-registration id. */
